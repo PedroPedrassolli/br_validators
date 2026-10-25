@@ -72,4 +72,15 @@ describe BrValidators::Pix do
       refute subject.valid?("123e4567e89b12d3a456426655440000")
     end
   end
+
+  describe "entradas copiadas ou corrompidas" do
+    it "ignora espaços Unicode nas pontas, mas não no meio" do
+      assert_equal :phone, subject.type("\u00A0+5511987654321\u00A0")
+      assert_nil subject.type("+55\u00A011987654321")
+    end
+
+    it "recusa texto com bytes inválidos sem levantar erro" do
+      assert_nil subject.type("maria@exemplo.com\xFF".dup.force_encoding(Encoding::UTF_8))
+    end
+  end
 end

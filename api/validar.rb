@@ -23,6 +23,13 @@ module ValidarApi
   # Nenhum documento tem mais que isso; recusa textos enormes logo de cara.
   TAMANHO_MAXIMO = 100
 
+  # O servidor da Vercel (WEBrick) entrega os parâmetros da URL como bytes, sem
+  # encoding. Marcar como UTF-8 deixa a gem reconhecer os espaços Unicode, como o
+  # espaço não separável que vem junto ao copiar um boleto de um PDF.
+  def self.parametro(valor)
+    valor.to_s.dup.force_encoding(Encoding::UTF_8)
+  end
+
   # Devolve [status HTTP, corpo da resposta].
   def self.responder(documento, valor)
     modulo = DOCUMENTOS[documento.to_s]
@@ -44,7 +51,9 @@ end
 
 # Formato que o runtime Ruby da Vercel espera: um Proc chamado Handler.
 Handler = proc do |request, response|
-  status, corpo = ValidarApi.responder(request.query["documento"], request.query["valor"])
+  documento = ValidarApi.parametro(request.query["documento"])
+  valor = ValidarApi.parametro(request.query["valor"])
+  status, corpo = ValidarApi.responder(documento, valor)
   response.status = status
   response["Content-Type"] = "application/json; charset=utf-8"
   # A resposta só depende da URL: a Vercel pode guardar em cache e responder

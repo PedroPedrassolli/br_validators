@@ -75,4 +75,14 @@ describe BrValidators::CNS do
       assert_equal "", subject.strip(nil)
     end
   end
+
+  describe "entradas copiadas ou corrompidas" do
+    it "aceita espaço não separável entre os grupos" do
+      assert subject.valid?("898\u00A00000\u00A00000\u00A00436")
+    end
+
+    it "recusa texto com bytes inválidos sem levantar erro" do
+      refute subject.valid?("898000000000436\xFF".dup.force_encoding(Encoding::UTF_8))
+    end
+  end
 end

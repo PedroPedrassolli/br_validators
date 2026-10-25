@@ -3,9 +3,21 @@
 As mudanças de cada versão ficam aqui. O projeto segue o
 [versionamento semântico](https://semver.org/lang/pt-BR/).
 
-## [Não lançado]
+## [0.1.1] - 2026-10-25
+
+### Corrigido
+
+- CNPJ: letras fora do ASCII, como `ı` (i sem ponto) e `ß`, não viram mais letras
+  válidas ao passar para maiúsculas. Antes, `"12abcı3450de60"` passava como válido.
+- Texto com bytes inválidos (UTF-8 quebrado) devolve `false` em vez de levantar
+  `ArgumentError`.
+- Espaços Unicode, como o espaço não separável que vem ao copiar de PDFs e sites,
+  contam como máscara em CPF, CNPJ, CNS e boleto, e são ignorados nas pontas da chave Pix.
+
+### Outros
 
 - Página para testar os validadores no navegador (https://br-validators.vercel.app).
+- Publicação também pelo botão "Run workflow", recusando versão já publicada.
 
 ## [0.1.0] - 2026-10-25
 

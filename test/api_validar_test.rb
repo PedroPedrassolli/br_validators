@@ -56,6 +56,20 @@ describe "api/validar.rb" do
     assert_equal "valor muito longo", subject["erro"]
   end
 
+  # O WEBrick da Vercel entrega os parâmetros como bytes (encoding binário).
+  it "aceita a linha de boleto copiada com espaço não separável" do
+    linha = "00190.00009\u00A002345.678904 12345.678176 1 10000000012345"
+    query.merge!("documento" => "boleto".b, "valor" => linha.b)
+    assert subject["valido"]
+    assert_equal "cobranca", subject["tipo"]
+  end
+
+  it "responde inválido, sem erro, quando o valor tem bytes inválidos" do
+    query["valor"] = "123\xFF\xFE".b
+    refute subject["valido"]
+    assert_equal 200, response.status
+  end
+
   it "trata parâmetros ausentes" do
     query.clear
     subject

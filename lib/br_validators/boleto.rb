@@ -19,11 +19,14 @@ module BrValidators
   #   diz que o dígito de cada bloco usa o mesmo módulo do verificador geral.
   #   https://cmsarquivos.febraban.org.br/Arquivos/documentos/PDF/Layout%20-%20C%C3%B3digo%20de%20Barras%20-%20Vers%C3%A3o%207%20-%2001_03_2023_mn.pdf
   module Boleto
-    # Pontos, espaços e hífens que aparecem na linha impressa.
-    MASK = /[.\-\s]/
+    # Pontos, espaços e hífens que aparecem na linha impressa. A linha copiada do
+    # PDF do boleto ou do site do banco costuma vir com espaço não separável, que
+    # [:space:] também pega.
+    MASK = /[.\-[:space:]]/
 
+    # O scrub está explicado no CPF: texto corrompido vira inválido, sem erro.
     def self.strip(value)
-      value.to_s.gsub(MASK, "")
+      value.to_s.scrub.gsub(MASK, "")
     end
 
     # :cobranca, :arrecadacao ou nil se a linha for inválida.
