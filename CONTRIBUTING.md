@@ -40,8 +40,9 @@ repositório: o RubyGems confia no workflow pelo *trusted publishing*.
 
 1. Num PR normal, suba a versão em `lib/br_validators/version.rb` e troque o
    "[Não lançado]" do `CHANGELOG.md` pela versão e pela data.
-2. Depois do merge, crie a tag na `main` com o mesmo número: `git tag v0.2.0 && git push origin v0.2.0`.
-3. O workflow confere se a tag bate com a versão, roda os testes e publica.
+2. Depois do merge, na aba **Actions → Release → Run workflow**, rode na `main`. O workflow
+   roda os testes, cria a tag `vX.Y.Z` da versão e publica.
+   (Também funciona criando a tag você mesmo: `git tag v0.2.0 && git push origin v0.2.0`.)
 
 Use o versionamento semântico: correção → 0.1.1, função nova → 0.2.0, mudança que
 quebra quem já usa → 1.0.0.
