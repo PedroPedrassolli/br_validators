@@ -5,6 +5,7 @@ require_relative "br_validators/cpf"
 require_relative "br_validators/cnpj"
 require_relative "br_validators/cns"
 require_relative "br_validators/pix"
+require_relative "br_validators/boleto"
 
 # Validação e formatação de documentos brasileiros.
 #

@@ -12,7 +12,7 @@ Gem Ruby para validar e formatar documentos brasileiros, sem dependências.
 | CNPJ | numérico e alfanumérico (o formato novo da Receita Federal, a partir de julho de 2026) |
 | CNS | Cartão Nacional de Saúde |
 | Chave Pix | CPF, CNPJ, e-mail, celular e chave aleatória |
-| Boleto | linha digitável |
+| Boleto | linha digitável de cobrança e de arrecadação |
 
 Cada documento tem os mesmos três métodos:
 
@@ -35,6 +35,14 @@ chave aleatória em minúsculas):
 BrValidators::Pix.type("+5511987654321")             # => :phone
 BrValidators::Pix.type("maria.souza@exemplo.com.br") # => :email
 BrValidators::Pix.valid?("123.456.789-09")           # => false (chave de CPF não tem máscara)
+```
+
+O boleto aceita a linha digitável de cobrança (bancos) e de arrecadação (contas de
+consumo e tributos) e também tem `type`:
+
+```ruby
+BrValidators::Boleto.type("00190.00009 02345.678904 12345.678176 1 10000000012345") # => :cobranca
+BrValidators::Boleto.valid?("826700000019000000000000000000000000000000000000")      # => true
 ```
 
 E, em projetos Rails, a validação no model:
