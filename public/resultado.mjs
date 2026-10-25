@@ -9,6 +9,23 @@ export const EXEMPLOS = {
   boleto: "00190.00009 02345.678904 12345.678176 1 10000000012345",
 };
 
+// Dica que aparece embaixo do campo e teclado do celular para cada documento.
+// "numeric" abre o teclado de números; "text", o teclado com letras (CNPJ
+// alfanumérico, e-mail e "+" do celular na chave Pix).
+export const CAMPOS = {
+  cpf: { dica: "11 dígitos, com ou sem pontos e hífen.", teclado: "numeric" },
+  cnpj: { dica: "14 caracteres; os 12 primeiros podem ter letras (CNPJ alfanumérico).", teclado: "text" },
+  cns: { dica: "15 dígitos, com ou sem espaços.", teclado: "numeric" },
+  pix: {
+    dica: "Como o banco guarda: CPF ou CNPJ sem pontos, celular com +55 e DDD, e-mail em minúsculas ou chave aleatória.",
+    teclado: "text",
+  },
+  boleto: {
+    dica: "47 dígitos (cobrança) ou 48 (contas e tributos), com ou sem pontos e espaços.",
+    teclado: "numeric",
+  },
+};
+
 // Nomes em português para os tipos que a API devolve.
 const TIPOS = {
   cpf: "chave de CPF",
@@ -32,9 +49,13 @@ export function descrever(resposta) {
     return { titulo: "Não deu para validar", detalhes: [resposta.erro], valido: false };
   }
 
+  if (!resposta.valido) {
+    return { titulo: "Inválido", detalhes: ["Confira o número e o formato indicado embaixo do campo."], valido: false };
+  }
+
   const detalhes = [];
   if (resposta.formatado) detalhes.push(`Formatado: ${resposta.formatado}`);
   if (resposta.tipo) detalhes.push(`Tipo: ${TIPOS[resposta.tipo] ?? resposta.tipo}`);
 
-  return { titulo: resposta.valido ? "Válido" : "Inválido", detalhes, valido: resposta.valido };
+  return { titulo: "Válido", detalhes, valido: true };
 }

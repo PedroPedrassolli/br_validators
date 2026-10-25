@@ -1,8 +1,8 @@
-// Testes das funções da página: node --test test/js
+// Testes das funções da página: node --test "test/js/*.test.mjs"
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { EXEMPLOS, descrever, urlDaValidacao } from "../../public/resultado.mjs";
+import { CAMPOS, EXEMPLOS, descrever, urlDaValidacao } from "../../public/resultado.mjs";
 
 describe("urlDaValidacao", () => {
   it("monta a URL da API com os parâmetros codificados", () => {
@@ -29,10 +29,10 @@ describe("descrever", () => {
     assert.deepEqual(texto.detalhes, ["Tipo: novo"]);
   });
 
-  it("marca como inválido, sem detalhes", () => {
+  it("marca como inválido e aponta para a dica do campo", () => {
     assert.deepEqual(descrever({ documento: "cpf", valido: false, formatado: null, tipo: null }), {
       titulo: "Inválido",
-      detalhes: [],
+      detalhes: ["Confira o número e o formato indicado embaixo do campo."],
       valido: false,
     });
   });
@@ -46,5 +46,21 @@ describe("descrever", () => {
 describe("EXEMPLOS", () => {
   it("tem um exemplo para cada documento do formulário", () => {
     assert.deepEqual(Object.keys(EXEMPLOS), ["cpf", "cnpj", "cns", "pix", "boleto"]);
+  });
+});
+
+describe("CAMPOS", () => {
+  it("tem dica e teclado para cada documento do formulário", () => {
+    assert.deepEqual(Object.keys(CAMPOS), Object.keys(EXEMPLOS));
+    for (const { dica, teclado } of Object.values(CAMPOS)) {
+      assert.ok(dica.length > 0);
+      assert.ok(["numeric", "text"].includes(teclado));
+    }
+  });
+
+  it("usa o teclado com letras onde o documento pode ter letras ou símbolos", () => {
+    assert.equal(CAMPOS.cnpj.teclado, "text");
+    assert.equal(CAMPOS.pix.teclado, "text");
+    assert.equal(CAMPOS.cpf.teclado, "numeric");
   });
 });
