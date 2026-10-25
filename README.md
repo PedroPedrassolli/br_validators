@@ -2,9 +2,18 @@
 
 Gem Ruby para validar e formatar documentos brasileiros, sem dependências.
 
-> Em desenvolvimento. Ainda não está publicada no RubyGems.
+## Instalação
 
-## O que vai ter na primeira versão
+No `Gemfile`:
+
+```ruby
+gem "br_validators"
+```
+
+> A versão 0.1.0 está pronta e vai ser publicada no RubyGems em breve. Até lá, use direto
+> do GitHub: `gem "br_validators", github: "PedroPedrassolli/br_validators"`.
+
+## O que tem
 
 | Documento | Observação |
 | --- | --- |
