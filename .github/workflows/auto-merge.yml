@@ -1,7 +1,8 @@
 # Mescla sozinho os PRs que passam em todas as verificações.
 #
 # Para segurar um PR (revisar com calma, esperar algo), use o rótulo "segurar"
-# ou deixe o PR em rascunho. Do Dependabot, só o grupo "patch" entra sozinho.
+# ou deixe o PR em rascunho. Do Dependabot, entra sozinho o grupo "actions" (versões
+# das Actions dos workflows, que a CI inteira e o actionlint conferem).
 #
 # O PR só entra se:
 #   1. não é rascunho, não tem o rótulo "segurar" e vem deste repositório;
@@ -89,8 +90,8 @@ jobs:
           if [ "$author" = "dependabot[bot]" ]; then
             is_bot=true
             case "$title" in
-              *"the patch group"*) ;;
-              *) skip "atualização do Dependabot fora do grupo patch; precisa de revisão." ;;
+              *"the actions group"*) ;;
+              *) skip "atualização do Dependabot fora do grupo actions; precisa de revisão." ;;
             esac
           fi
 
