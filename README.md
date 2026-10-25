@@ -36,6 +36,11 @@ BrValidators::CNPJ.format("12abc34501de35")     # => "12.ABC.345/01DE-35"
 BrValidators::CNS.format("898000000000436")      # => "898 0000 0000 0436"
 ```
 
+Pontos, hífens e espaços são ignorados em qualquer posição, inclusive o espaço não
+separável que vem junto ao copiar de um PDF ou de um site. Texto corrompido (bytes que
+não são UTF-8 válido) só dá `false`, sem erro. Passe sempre o documento como texto: um
+número inteiro perde os zeros à esquerda (`01234567890` vira `1234567890`).
+
 A chave Pix é um caso à parte: em vez de `format` e `strip`, ela tem `type`, que diz
 o tipo da chave. Ela precisa estar como o Banco Central guarda (sem máscara, e-mail e
 chave aleatória em minúsculas):

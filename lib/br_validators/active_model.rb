@@ -25,7 +25,7 @@ module BrValidators
   end
 end
 
-# Um arquivo por validador (o Rails espera uma classe por arquivo).
+# Um arquivo por validador: uma classe por arquivo, como no resto da gem.
 require_relative "validators/cpf_validator"
 require_relative "validators/cnpj_validator"
 require_relative "validators/cns_validator"

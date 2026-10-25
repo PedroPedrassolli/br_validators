@@ -75,4 +75,20 @@ describe BrValidators::CPF do
       assert_equal "", subject.strip(nil)
     end
   end
+
+  # Texto copiado de PDF ou de site costuma trazer espaço não separável (U+00A0),
+  # e texto corrompido pode ter bytes que não são UTF-8 válido.
+  describe "entradas copiadas ou corrompidas" do
+    it "aceita espaço não separável e outros espaços Unicode" do
+      assert subject.valid?("123.456.789-09\u00A0")
+      assert subject.valid?("123\u2007456\u2007789\u200709")
+      assert_equal "12345678909", subject.strip("\u00A0123.456.789-09\u3000")
+    end
+
+    it "recusa texto com bytes inválidos sem levantar erro" do
+      texto = "123.456.789-09\xFF".dup.force_encoding(Encoding::UTF_8)
+      refute subject.valid?(texto)
+      assert_nil subject.format(texto)
+    end
+  end
 end

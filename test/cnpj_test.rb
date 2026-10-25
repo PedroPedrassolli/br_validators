@@ -53,6 +53,21 @@ describe BrValidators::CNPJ do
       refute subject.valid?("112223330001811")
     end
 
+    it "recusa letras fora do ASCII que o Unicode passaria para maiúsculas" do
+      # Válidos com letras ASCII...
+      assert subject.valid?("12ABCI3450DE60")
+      assert subject.valid?("12SS34ABCD0193")
+      # ...mas "ı" (i sem ponto), "ſ" (s longo) e "ß" não são letras de CNPJ.
+      refute subject.valid?("12abcı3450de60")
+      refute subject.valid?("12ſS34ABCD0193")
+      refute subject.valid?("12ß34ABCD0193")
+    end
+
+    it "aceita espaço não separável e recusa bytes inválidos sem levantar erro" do
+      assert subject.valid?("12.ABC.345/01DE-35\u00A0")
+      refute subject.valid?("12ABC34501DE35\xFF".dup.force_encoding(Encoding::UTF_8))
+    end
+
     it "recusa outros símbolos, vazio e nil" do
       refute subject.valid?("11.222.333*0001-81")
       refute subject.valid?("")

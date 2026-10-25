@@ -18,6 +18,9 @@ module BrValidators
   module Pix
     MAX_LENGTH = 77
 
+    # Espaços nas pontas, inclusive os Unicode (o strip do Ruby só tira os ASCII).
+    EDGE_SPACES = /\A[[:space:]]+|[[:space:]]+\z/
+
     PHONE = /\A\+[1-9][0-9]\d{1,14}\z/
     EVP = /\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/
 
@@ -42,8 +45,9 @@ module BrValidators
     # Devolve :cpf, :cnpj, :phone, :email ou :evp, ou nil se a chave for inválida.
     # Só os espaços nas pontas são ignorados: o resto precisa estar exatamente
     # como o DICT guarda (sem máscara, e-mail e chave aleatória em minúsculas).
+    # O scrub está explicado no CPF: texto corrompido vira inválido, sem erro.
     def self.type(value)
-      key = value.to_s.strip
+      key = value.to_s.scrub.gsub(EDGE_SPACES, "")
       return nil if key.size > MAX_LENGTH
 
       found = CHECKS.find { |_type, check| check.call(key) }
