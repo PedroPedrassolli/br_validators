@@ -1,4 +1,8 @@
 # Roda os testes e o lint a cada push na main e em todo pull request.
+#
+# As Actions estão fixadas pelo commit (o SHA), com a versão no comentário: uma tag
+# como "v7" pode ser movida para outro código, o SHA não. O Dependabot atualiza os
+# dois juntos (ver .github/dependabot.yml).
 name: CI
 
 # Mudança só em Markdown (README, CHANGELOG...) não precisa de CI.
@@ -12,26 +16,35 @@ on:
 permissions:
   contents: read
 
-# Um push novo cancela a execução anterior da mesma branch.
+# Num PR, um push novo cancela a execução anterior. Na main, cada commit termina
+# a sua (o histórico da main fica com o resultado de todos).
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # Confere a sintaxe dos próprios workflows e os scripts bash (shellcheck).
+  # Confere a sintaxe dos workflows (o actionlint também passa o shellcheck nos
+  # trechos "run:") e os scripts de .github/scripts.
   workflows:
     name: Workflows (actionlint)
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
+      # O SHA256 vem do arquivo de checksums da release do actionlint. Se o download
+      # vier diferente (arquivo trocado ou corrompido), o job para antes de rodar.
       - name: actionlint
         env:
-          VERSION: 1.7.7
+          VERSION: 1.7.12
+          SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
         run: |
-          curl -sSfL "https://github.com/rhysd/actionlint/releases/download/v$VERSION/actionlint_${VERSION}_linux_amd64.tar.gz" |
-            tar xz actionlint
+          curl -sSfL -o actionlint.tar.gz \
+            "https://github.com/rhysd/actionlint/releases/download/v$VERSION/actionlint_${VERSION}_linux_amd64.tar.gz"
+          echo "$SHA256  actionlint.tar.gz" | sha256sum --check --quiet
+          tar xzf actionlint.tar.gz actionlint
           # Cada problema vira uma anotação no PR, com arquivo e linha.
           # (As aspas simples são de propósito: o $err é do template do actionlint.)
           # shellcheck disable=SC2016
@@ -39,6 +52,15 @@ jobs:
           {{end}}'
           if ! ./actionlint -format "$format" 2> actionlint.log; then
             [ -s actionlint.log ] && echo "::error title=actionlint::$(tr '\n' ' ' < actionlint.log)"
+            exit 1
+          fi
+
+      # O shellcheck já vem instalado no runner do Ubuntu. Cada problema vira uma
+      # anotação no PR ("arquivo:linha:coluna: nível: mensagem" → "::error ...").
+      - name: shellcheck
+        run: |
+          if ! problems=$(shellcheck --format=gcc .github/scripts/*.sh); then
+            sed -E 's/^([^:]+):([0-9]+):([0-9]+): [a-z]+: (.*)$/::error file=\1,line=\2,col=\3::\4/' <<<"$problems"
             exit 1
           fi
 
@@ -52,9 +74,11 @@ jobs:
       matrix:
         ruby: ["3.3", "3.4", "4.0"]
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-      - uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
@@ -68,18 +92,25 @@ jobs:
           line=$(ruby -rjson -e 'puts JSON.parse(File.read("coverage/.last_run.json")).dig("result", "line")')
           echo "::notice title=Cobertura (Ruby ${{ matrix.ruby }})::${line}% das linhas executadas pelos testes"
 
-      # Confere que o pacote da gem é montado sem erro.
-      - name: Montar a gem
-        run: gem build br_validators.gemspec
+      # Monta o pacote e instala como quem usa a gem: fora do Bundler e fora da pasta
+      # do projeto. Pega arquivo que ficou de fora do spec.files (ex.: as traduções).
+      - name: Montar e instalar a gem
+        run: |
+          gem build br_validators.gemspec
+          gem install --local ./br_validators-*.gem
+          cd "$RUNNER_TEMP"
+          ruby -e 'require "br_validators"; abort "a gem instalada não valida" unless BrValidators::CPF.valid?("123.456.789-09")'
 
   lint:
     name: Estilo (RuboCop)
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-      - uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
         with:
           ruby-version: "3.4"
           bundler-cache: true
@@ -94,14 +125,18 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
 
       - name: Testes
         run: node --test "test/js/*.test.mjs"
 
+      # Versão exata: com "prettier@3", uma versão nova do Prettier podia mudar a
+      # formatação e quebrar a CI sem ninguém ter mexido no código.
       - name: Formatação (Prettier)
-        run: npx --yes prettier@3 --check public test/js vercel.json
+        run: npx --yes prettier@3.8.1 --check public test/js vercel.json
