@@ -38,8 +38,8 @@ module BrValidators
 
     def self.check_digits(base)
       first = check_digit(base)
-      second = check_digit(base + first)
-      first + second
+      second = check_digit("#{base}#{first}")
+      "#{first}#{second}"
     end
 
     # Pesos decrescentes até 2, começando por (tamanho + 1): 10..2 para 9 dígitos,
