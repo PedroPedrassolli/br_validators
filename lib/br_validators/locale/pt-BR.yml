@@ -1,0 +1,8 @@
+pt-BR:
+  errors:
+    messages:
+      cpf_invalid: "não é um CPF válido"
+      cnpj_invalid: "não é um CNPJ válido"
+      cns_invalid: "não é um CNS válido"
+      pix_invalid: "não é uma chave Pix válida"
+      boleto_invalid: "não é uma linha digitável de boleto válida"

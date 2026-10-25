@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   }
 
   # Só o código e os textos vão para o pacote; testes e workflows ficam no repositório.
-  spec.files = Dir["lib/**/*.rb", "README.md", "CHANGELOG.md", "LICENSE"]
+  spec.files = Dir["lib/**/*.{rb,yml}", "README.md", "CHANGELOG.md", "LICENSE"]
 
   # Sem dependências em tempo de execução: a integração com o ActiveModel só é
   # carregada quando a aplicação já tem o Rails (ou o ActiveModel) instalado.

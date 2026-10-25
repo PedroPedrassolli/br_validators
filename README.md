@@ -45,11 +45,26 @@ BrValidators::Boleto.type("00190.00009 02345.678904 12345.678176 1 1000000001234
 BrValidators::Boleto.valid?("826700000019000000000000000000000000000000000000")      # => true
 ```
 
-E, em projetos Rails, a validação no model:
+## Rails e ActiveModel
+
+Em projetos com ActiveModel (todo app Rails tem), os validadores entram sozinhos:
 
 ```ruby
-validates :cpf, cpf: true
+class Cliente < ApplicationRecord
+  validates :cpf, cpf: true
+  validates :cnpj, cnpj: true, allow_blank: true
+  validates :cartao_sus, cns: true
+  validates :chave_pix, pix: { message: "não parece uma chave Pix" }
+  validates :linha_digitavel, boleto: true
+end
 ```
+
+As mensagens de erro vêm em português (`pt-BR`) e inglês (`en`). Para trocar o texto,
+sobrescreva as chaves `errors.messages.cpf_invalid`, `cnpj_invalid`, `cns_invalid`,
+`pix_invalid` e `boleto_invalid` no seu arquivo de tradução.
+
+Os validadores se chamam `CpfValidator`, `CnpjValidator`, `CnsValidator`, `PixValidator` e
+`BoletoValidator`, no nível de cima, porque é assim que o Rails encontra `cpf: true`.
 
 Já existem boas gems para CPF e CNPJ. A ideia aqui é juntar num lugar só os documentos
 que costumam aparecer em sistemas brasileiros (inclusive CNS, Pix e boleto), com
