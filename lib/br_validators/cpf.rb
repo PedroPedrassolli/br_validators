@@ -45,7 +45,7 @@ module BrValidators
     # Pesos decrescentes até 2, começando por (tamanho + 1): 10..2 para 9 dígitos,
     # 11..2 para 10 dígitos.
     def self.check_digit(digits)
-      weights = (2..digits.size + 1).to_a.reverse
+      weights = (2..(digits.size + 1)).to_a.reverse
       sum = digits.chars.zip(weights).sum { |digit, weight| digit.to_i * weight }
       rest = sum % 11
       (rest < 2 ? 0 : 11 - rest).to_s
