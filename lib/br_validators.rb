@@ -16,3 +16,7 @@ require_relative "br_validators/boleto"
 #   strip(valor)   -> o documento sem a máscara
 module BrValidators
 end
+
+# Validação nos models (validates :cpf, cpf: true): só entra quando o projeto tem
+# o ActiveModel (todo app Rails tem), para a gem continuar sem dependências.
+require_relative "br_validators/active_model" if Gem.loaded_specs.key?("activemodel")

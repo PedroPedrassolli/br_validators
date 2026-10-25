@@ -1,0 +1,8 @@
+en:
+  errors:
+    messages:
+      cpf_invalid: "is not a valid CPF"
+      cnpj_invalid: "is not a valid CNPJ"
+      cns_invalid: "is not a valid CNS"
+      pix_invalid: "is not a valid Pix key"
+      boleto_invalid: "is not a valid boleto line"

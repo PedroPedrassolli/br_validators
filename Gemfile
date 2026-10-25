@@ -6,6 +6,7 @@ source "https://rubygems.org"
 gemspec
 
 # Só para desenvolvimento e testes. Quem instala a gem não recebe nenhuma delas.
+gem "activemodel"
 gem "minitest"
 gem "rake"
 gem "rubocop", require: false
