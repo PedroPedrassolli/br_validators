@@ -1,0 +1,135 @@
+/* Cores em variáveis para trocar tudo de uma vez no tema escuro. */
+:root {
+  --fundo: #f7f7f5;
+  --texto: #1d1d1b;
+  --suave: #5c5c57;
+  --borda: #c9c9c3;
+  --destaque: #1f5f4a;
+  --valido: #1f6b3a;
+  --invalido: #a3271f;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #161615;
+    --texto: #ececea;
+    --suave: #a8a8a2;
+    --borda: #45453f;
+    --destaque: #7cc9a8;
+    --valido: #7ed49b;
+    --invalido: #f2948c;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--texto);
+  font:
+    1rem/1.6 system-ui,
+    sans-serif;
+}
+
+main {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+}
+
+h1 {
+  margin: 0 0 0.5rem;
+  font-family: ui-monospace, monospace;
+  font-size: 2rem;
+}
+
+header p,
+footer {
+  color: var(--suave);
+}
+
+form {
+  display: grid;
+  gap: 0.5rem;
+  margin: 2rem 0;
+}
+
+label {
+  font-weight: 600;
+  margin-top: 0.75rem;
+}
+
+select,
+input,
+button {
+  font: inherit;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--borda);
+  border-radius: 0.4rem;
+  background: transparent;
+  color: inherit;
+}
+
+input {
+  font-family: ui-monospace, monospace;
+}
+
+:focus-visible {
+  outline: 3px solid var(--destaque);
+  outline-offset: 2px;
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+button {
+  cursor: pointer;
+  background: var(--destaque);
+  border-color: var(--destaque);
+  color: var(--fundo);
+  font-weight: 600;
+}
+
+button.secundario {
+  background: transparent;
+  color: var(--destaque);
+}
+
+#resultado:not(:empty) {
+  padding: 1rem 1.25rem;
+  border-left: 4px solid var(--borda);
+}
+
+#resultado[data-estado="valido"] {
+  border-color: var(--valido);
+}
+
+#resultado[data-estado="invalido"] {
+  border-color: var(--invalido);
+}
+
+#resultado[data-estado="valido"] strong {
+  color: var(--valido);
+}
+
+#resultado[data-estado="invalido"] strong {
+  color: var(--invalido);
+}
+
+#resultado ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+  font-family: ui-monospace, monospace;
+}
+
+a {
+  color: var(--destaque);
+}

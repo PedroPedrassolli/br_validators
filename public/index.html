@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>br_validators: teste os validadores</title>
+    <meta
+      name="description"
+      content="Teste no navegador a gem Ruby br_validators: CPF, CNPJ alfanumérico, CNS, chave Pix e boleto."
+    />
+    <link rel="stylesheet" href="/style.css" />
+    <script type="module" src="/app.mjs"></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>br_validators</h1>
+        <p>
+          Teste os validadores da gem Ruby no navegador. Quem valida é a própria gem, rodando numa função Ruby; nada do
+          que você digita é guardado.
+        </p>
+      </header>
+
+      <form id="formulario">
+        <label for="documento">Documento</label>
+        <select id="documento" name="documento">
+          <option value="cpf">CPF</option>
+          <option value="cnpj">CNPJ (numérico ou alfanumérico)</option>
+          <option value="cns">CNS (Cartão Nacional de Saúde)</option>
+          <option value="pix">Chave Pix</option>
+          <option value="boleto">Linha digitável de boleto</option>
+        </select>
+
+        <label for="valor">Número ou chave</label>
+        <input id="valor" name="valor" type="text" autocomplete="off" spellcheck="false" maxlength="100" required />
+
+        <div class="acoes">
+          <button type="submit">Validar</button>
+          <button type="button" id="exemplo" class="secundario">Usar um exemplo</button>
+        </div>
+      </form>
+
+      <section id="resultado" aria-live="polite"></section>
+
+      <footer>
+        <p>
+          Código aberto no
+          <a href="https://github.com/PedroPedrassolli/br_validators">GitHub</a>. Feito por
+          <a href="https://pedrassolli.vercel.app">Pedro Pedrassolli</a>. Os exemplos são fictícios.
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>
