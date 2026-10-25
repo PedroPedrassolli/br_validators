@@ -81,7 +81,7 @@ mensagens de erro em português e inglês.
 
 ## Página de teste
 
-Dá para testar cada validador no navegador em https://br-validators.vercel.app. A página
+Dá para testar cada validador no navegador em https://br-validators-gem.vercel.app. A página
 (`public/`) é HTML e JavaScript puro e chama uma função Ruby da Vercel
 (`api/validar.rb`) que usa a própria gem, então as regras ficam num lugar só:
 
