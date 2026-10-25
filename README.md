@@ -79,6 +79,17 @@ Já existem boas gems para CPF e CNPJ. A ideia aqui é juntar num lugar só os d
 que costumam aparecer em sistemas brasileiros (inclusive CNS, Pix e boleto), com
 mensagens de erro em português e inglês.
 
+## Página de teste
+
+Dá para testar cada validador no navegador em https://br-validators.vercel.app. A página
+(`public/`) é HTML e JavaScript puro e chama uma função Ruby da Vercel
+(`api/validar.rb`) que usa a própria gem, então as regras ficam num lugar só:
+
+```
+GET /api/validar?documento=cnpj&valor=12.ABC.345/01DE-35
+{"documento":"cnpj","valido":true,"formatado":"12.ABC.345/01DE-35","tipo":null}
+```
+
 ## Desenvolvimento
 
 Precisa de Ruby 3.3 ou mais novo.
@@ -87,6 +98,7 @@ Precisa de Ruby 3.3 ou mais novo.
 bundle install
 bundle exec rake test   # testes (a cobertura mínima é 100% das linhas)
 bundle exec rubocop     # estilo
+node --test "test/js/*.test.mjs"   # testes da página de teste
 ```
 
 O passo a passo para contribuir está no [CONTRIBUTING.md](CONTRIBUTING.md).

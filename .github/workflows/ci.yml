@@ -87,3 +87,21 @@ jobs:
       # O formato "github" transforma cada problema numa anotação no PR, com arquivo e linha.
       - name: RuboCop
         run: bundle exec rubocop --format github
+
+  # A página de teste (public/) é HTML e JavaScript puro, sem dependências.
+  pagina:
+    name: Página (JavaScript)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Testes
+        run: node --test "test/js/*.test.mjs"
+
+      - name: Formatação (Prettier)
+        run: npx --yes prettier@3 --check public test/js vercel.json

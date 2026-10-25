@@ -30,6 +30,8 @@ PR de fork não é mesclado sozinho: precisa de revisão.
 | --- | --- |
 | `bundle exec rake test` | Testes com cobertura |
 | `bundle exec rubocop` | Estilo |
+| `node --test "test/js/*.test.mjs"` | Testes da página (`public/`) |
+| `npx prettier --check public test/js vercel.json` | Formatação da página |
 
 ## Como publicar uma versão
 
@@ -50,3 +52,7 @@ quebra quem já usa → 1.0.0.
 - Merge feito pelo `GITHUB_TOKEN` não dispara outros workflows. Por isso o
   `auto-merge.yml` move o card do Jira ele mesmo.
 - Workflows disparados por `workflow_run` usam a versão que está na `main`.
+- O PR só entra depois que a prévia da Vercel é publicada. Se você mudar o `auto-merge.yml`,
+  abra o PR como rascunho: até o merge, quem decide é a versão antiga, que está na `main`.
+- A função `api/validar.rb` responde com cache de 1 dia na Vercel (a resposta só depende
+  da URL). Isso economiza execuções no plano gratuito.
