@@ -14,8 +14,9 @@ module BrValidators
   # Fonte: manual do dígito verificador do CNPJ, da Receita Federal.
   # https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/documentos-tecnicos/cnpj/manual-dv-cnpj.pdf
   module CNPJ
-    # Caracteres de máscara aceitos na entrada: ponto, barra, hífen e espaços.
-    MASK = %r{[./\-\s]}
+    # Caracteres de máscara aceitos na entrada: ponto, barra, hífen e espaços
+    # (inclusive os espaços Unicode, como o não separável).
+    MASK = %r{[./\-[:space:]]}
 
     # 12 caracteres alfanuméricos e 2 dígitos no final.
     PATTERN = /\A[0-9A-Z]{12}\d{2}\z/
@@ -23,8 +24,12 @@ module BrValidators
     # Tira a máscara e passa as letras para maiúsculas:
     # "12.abc.345/01de-35" vira "12ABC34501DE35".
     # A Receita só usa maiúsculas, mas é comum alguém digitar em minúsculas.
+    #
+    # upcase(:ascii) mexe só nas letras de a a z. O upcase normal segue o Unicode e
+    # transforma "ı" (i sem ponto) em "I" e "ß" em "SS", o que faria um texto
+    # errado passar como CNPJ válido. O scrub está explicado no CPF.
     def self.strip(value)
-      value.to_s.gsub(MASK, "").upcase
+      value.to_s.scrub.gsub(MASK, "").upcase(:ascii)
     end
 
     def self.valid?(value)

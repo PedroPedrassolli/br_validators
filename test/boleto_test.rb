@@ -92,4 +92,15 @@ describe BrValidators::Boleto do
       assert_equal "", subject.strip(nil)
     end
   end
+
+  describe "entradas copiadas ou corrompidas" do
+    it "aceita a linha copiada de um PDF, com espaço não separável" do
+      linha = "00190.00009\u00A002345.678904\u00A012345.678176\u00A01\u00A010000000012345"
+      assert_equal :cobranca, subject.type(linha)
+    end
+
+    it "recusa texto com bytes inválidos sem levantar erro" do
+      refute subject.valid?("#{cobranca}\xFF".force_encoding(Encoding::UTF_8))
+    end
+  end
 end

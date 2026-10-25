@@ -14,6 +14,8 @@ require_relative "br_validators/boleto"
 #   valid?(valor)  -> true ou false
 #   format(valor)  -> o documento com a máscara, ou nil se for inválido
 #   strip(valor)   -> o documento sem a máscara
+# A chave Pix é a exceção: tem valid? e type, mas não format nem strip, porque
+# precisa estar exatamente como o Banco Central guarda. Pix e Boleto têm type.
 module BrValidators
 end
 

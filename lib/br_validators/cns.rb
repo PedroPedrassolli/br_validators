@@ -19,11 +19,13 @@ module BrValidators
   # https://rni-docs.anvisa.gov.br/docs/regras_gerais/validacoes/validacaoCNS/
   module CNS
     # O cartão mostra o número em grupos separados por espaço; aceitamos também
-    # pontos e hífens, que às vezes aparecem em sistemas antigos.
-    MASK = /[.\-\s]/
+    # pontos e hífens, que às vezes aparecem em sistemas antigos. Espaços Unicode
+    # (como o não separável) também contam como espaço.
+    MASK = /[.\-[:space:]]/
 
+    # O scrub está explicado no CPF: texto corrompido vira inválido, sem erro.
     def self.strip(value)
-      value.to_s.gsub(MASK, "")
+      value.to_s.scrub.gsub(MASK, "")
     end
 
     def self.valid?(value)
