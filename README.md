@@ -23,6 +23,8 @@ BrValidators::CPF.strip("123.456.789-09")  # => "12345678909"
 
 BrValidators::CNPJ.valid?("12.ABC.345/01DE-35") # => true (CNPJ alfanumérico)
 BrValidators::CNPJ.format("12abc34501de35")     # => "12.ABC.345/01DE-35"
+
+BrValidators::CNS.format("898000000000436")      # => "898 0000 0000 0436"
 ```
 
 E, em projetos Rails, a validação no model:
