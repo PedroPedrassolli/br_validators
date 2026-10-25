@@ -10,3 +10,4 @@ As mudanças de cada versão ficam aqui. O projeto segue o
 - `BrValidators::CNPJ` para o formato numérico e o alfanumérico da Receita Federal.
 - `BrValidators::CNS` com as rotinas de validação do Ministério da Saúde.
 - `BrValidators::Pix` com `valid?` e `type`, seguindo a especificação do DICT.
+- `BrValidators::Boleto` para a linha digitável de cobrança (47 dígitos) e de arrecadação (48 dígitos).
