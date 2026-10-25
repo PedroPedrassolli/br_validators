@@ -1,9 +1,11 @@
-/* Cores em variáveis para trocar tudo de uma vez no tema escuro. */
+/* Cores em variáveis para trocar tudo de uma vez no tema escuro.
+   A borda tem contraste de pelo menos 3:1 com o fundo (mínimo da WCAG para
+   contornos de campos): 3,2:1 no tema claro e 3,5:1 no escuro. */
 :root {
   --fundo: #f7f7f5;
   --texto: #1d1d1b;
   --suave: #5c5c57;
-  --borda: #c9c9c3;
+  --borda: #8a8a83;
   --destaque: #1f5f4a;
   --valido: #1f6b3a;
   --invalido: #a3271f;
@@ -15,7 +17,7 @@
     --fundo: #161615;
     --texto: #ececea;
     --suave: #a8a8a2;
-    --borda: #45453f;
+    --borda: #6e6e68;
     --destaque: #7cc9a8;
     --valido: #7ed49b;
     --invalido: #f2948c;
@@ -35,10 +37,21 @@ body {
     sans-serif;
 }
 
-main {
+/* Cabeçalho, conteúdo e rodapé na mesma coluna central. */
+header,
+main,
+footer {
   max-width: 40rem;
   margin: 0 auto;
-  padding: 3rem 1rem;
+  padding: 0 1rem;
+}
+
+header {
+  padding-top: 3rem;
+}
+
+footer {
+  padding-bottom: 3rem;
 }
 
 h1 {
@@ -48,8 +61,14 @@ h1 {
 }
 
 header p,
-footer {
+footer,
+.dica {
   color: var(--suave);
+}
+
+.dica {
+  margin: 0;
+  font-size: 0.875rem;
 }
 
 form {
@@ -103,7 +122,13 @@ button.secundario {
   color: var(--destaque);
 }
 
+button:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
 #resultado:not(:empty) {
+  margin-bottom: 2rem;
   padding: 1rem 1.25rem;
   border-left: 4px solid var(--borda);
 }
@@ -124,10 +149,16 @@ button.secundario {
   color: var(--invalido);
 }
 
+/* Fonte monoespaçada para os valores (documento formatado, tipo); quando é
+   inválido, o detalhe é uma frase e fica na fonte normal. */
 #resultado ul {
   margin: 0.5rem 0 0;
   padding-left: 1.25rem;
   font-family: ui-monospace, monospace;
+}
+
+#resultado[data-estado="invalido"] ul {
+  font-family: inherit;
 }
 
 a {
