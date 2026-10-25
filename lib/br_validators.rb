@@ -2,6 +2,7 @@
 
 require_relative "br_validators/version"
 require_relative "br_validators/cpf"
+require_relative "br_validators/cnpj"
 
 # Validação e formatação de documentos brasileiros.
 #

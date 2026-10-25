@@ -20,6 +20,9 @@ Cada documento terá os mesmos três métodos:
 BrValidators::CPF.valid?("123.456.789-09") # => true
 BrValidators::CPF.format("12345678909")    # => "123.456.789-09"
 BrValidators::CPF.strip("123.456.789-09")  # => "12345678909"
+
+BrValidators::CNPJ.valid?("12.ABC.345/01DE-35") # => true (CNPJ alfanumérico)
+BrValidators::CNPJ.format("12abc34501de35")     # => "12.ABC.345/01DE-35"
 ```
 
 E, em projetos Rails, a validação no model:
