@@ -9,6 +9,10 @@
 # done = concluído/cancelado. Se o card estiver numa categoria fora da lista,
 # nada é feito (ex.: nunca reabrir um card concluído).
 #
+# Mover o card é um extra: quando algo dá errado (card que não existe, Jira fora
+# do ar, transição que não existe), o script só avisa e termina com sucesso, para
+# não deixar a CI ou o merge automático vermelhos por causa do Jira.
+#
 # Precisa de JIRA_EMAIL e JIRA_API_TOKEN (secrets do GitHub) e JIRA_SITE.
 set -euo pipefail
 
@@ -16,13 +20,17 @@ key="$1"
 target="$2"
 allowed="$3"
 
-if [ -z "${JIRA_EMAIL:-}" ] || [ -z "${JIRA_API_TOKEN:-}" ]; then
-  echo "::warning title=Jira::Secrets JIRA_EMAIL e JIRA_API_TOKEN ausentes; o card $key não foi movido."
+warn() {
+  echo "::warning title=Jira::$1"
   exit 0
+}
+
+if [ -z "${JIRA_EMAIL:-}" ] || [ -z "${JIRA_API_TOKEN:-}" ]; then
+  warn "Secrets JIRA_EMAIL e JIRA_API_TOKEN ausentes; o card $key não foi movido."
 fi
 
 jira() {
-  curl --silent --show-error --fail-with-body \
+  curl --silent --show-error --fail \
     --user "$JIRA_EMAIL:$JIRA_API_TOKEN" \
     -H "Accept: application/json" -H "Content-Type: application/json" \
     "$@"
@@ -30,9 +38,9 @@ jira() {
 
 issue="https://$JIRA_SITE/rest/api/3/issue/$key"
 
-current=$(jira "$issue?fields=status" | jq -r '.fields.status.name + "|" + .fields.status.statusCategory.key')
-current_name="${current%%|*}"
-current_category="${current##*|}"
+response=$(jira "$issue?fields=status") || warn "Não deu para ler o card $key (não existe ou o Jira não respondeu)."
+current_name=$(jq -r .fields.status.name <<<"$response")
+current_category=$(jq -r .fields.status.statusCategory.key <<<"$response")
 
 if [ "$current_name" = "$target" ]; then
   echo "$key já está em \"$target\"."
@@ -50,13 +58,11 @@ if [[ ",$allowed," != *",$current_category,"* ]]; then
   exit 0
 fi
 
-transition=$(jira "$issue/transitions" | jq -r --arg target "$target" \
-  '.transitions[] | select(.to.name == $target) | .id' | head -n 1)
+transitions=$(jira "$issue/transitions") || warn "Não deu para ler as transições do card $key."
+transition=$(jq -r --arg target "$target" '.transitions[] | select(.to.name == $target) | .id' <<<"$transitions" | head -n 1)
 
-if [ -z "$transition" ]; then
-  echo "::error title=Jira::Não há transição de \"$current_name\" para \"$target\" no card $key."
-  exit 1
-fi
+[ -n "$transition" ] || warn "Não há transição de \"$current_name\" para \"$target\" no card $key."
 
-jira -X POST "$issue/transitions" --data "{\"transition\":{\"id\":\"$transition\"}}" > /dev/null
+jira -X POST "$issue/transitions" --data "{\"transition\":{\"id\":\"$transition\"}}" > /dev/null ||
+  warn "O Jira recusou mover o card $key para \"$target\"."
 echo "::notice title=Jira::$key: \"$current_name\" → \"$target\""

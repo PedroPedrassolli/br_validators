@@ -3,6 +3,9 @@
 # desenvolvimento (Minitest, RuboCop...) já vêm sempre na versão mais nova na CI,
 # porque o Gemfile.lock não é versionado.
 #
+# As Actions estão fixadas pelo commit (SHA) com a versão no comentário
+# ("@3d3c42e... # v7.0.1"); o Dependabot atualiza os dois juntos.
+#
 # cooldown: espera alguns dias antes de sugerir uma versão recém-lançada.
 version: 2
 
