@@ -6,3 +6,4 @@ As mudanças de cada versão ficam aqui. O projeto segue o
 ## [Não lançado]
 
 - Estrutura inicial da gem, testes com Minitest e CI no GitHub Actions.
+- `BrValidators::CPF` com `valid?`, `format` e `strip`.
