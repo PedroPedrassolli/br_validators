@@ -1,0 +1,48 @@
+# Publica a gem no RubyGems quando uma tag vX.Y.Z chega ao GitHub.
+#
+# Usa o "trusted publishing" do RubyGems: o RubyGems confia neste workflow
+# (pelo token OIDC que o GitHub gera na hora), então nenhum token de API fica
+# guardado nos secrets do repositório.
+# Configuração no RubyGems: repositório PedroPedrassolli/br_validators,
+# workflow release.yml, environment "release".
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Publicar no RubyGems
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: release
+    permissions:
+      id-token: write # o RubyGems confere que o pedido vem deste workflow
+      contents: write # o rake release confere a tag da versão
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+
+      # Evita publicar a versão errada: a tag v0.1.0 só passa se a gem for 0.1.0.
+      - name: Conferir a versão
+        run: |
+          version=$(ruby -Ilib -rbr_validators/version -e 'print BrValidators::VERSION')
+          if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "::error title=Versão::A tag $GITHUB_REF_NAME não bate com a versão da gem ($version)."
+            exit 1
+          fi
+
+      - name: Testes
+        run: bundle exec rake test
+
+      - uses: rubygems/release-gem@v1

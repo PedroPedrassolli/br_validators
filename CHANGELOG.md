@@ -5,10 +5,12 @@ As mudanças de cada versão ficam aqui. O projeto segue o
 
 ## [Não lançado]
 
-- Estrutura inicial da gem, testes com Minitest e CI no GitHub Actions.
+## [0.1.0] - 2026-10-25
+
 - `BrValidators::CPF` com `valid?`, `format` e `strip`.
 - `BrValidators::CNPJ` para o formato numérico e o alfanumérico da Receita Federal.
 - `BrValidators::CNS` com as rotinas de validação do Ministério da Saúde.
 - `BrValidators::Pix` com `valid?` e `type`, seguindo a especificação do DICT.
 - `BrValidators::Boleto` para a linha digitável de cobrança (47 dígitos) e de arrecadação (48 dígitos).
 - Validadores para ActiveModel (`validates :cpf, cpf: true` e afins) com mensagens em pt-BR e en.
+- Publicação automática no RubyGems ao criar uma tag.
