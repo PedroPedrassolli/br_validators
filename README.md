@@ -14,7 +14,7 @@ Gem Ruby para validar e formatar documentos brasileiros, sem dependências.
 | Chave Pix | CPF, CNPJ, e-mail, celular e chave aleatória |
 | Boleto | linha digitável |
 
-Cada documento terá os mesmos três métodos:
+Cada documento tem os mesmos três métodos:
 
 ```ruby
 BrValidators::CPF.valid?("123.456.789-09") # => true
@@ -25,6 +25,16 @@ BrValidators::CNPJ.valid?("12.ABC.345/01DE-35") # => true (CNPJ alfanumérico)
 BrValidators::CNPJ.format("12abc34501de35")     # => "12.ABC.345/01DE-35"
 
 BrValidators::CNS.format("898000000000436")      # => "898 0000 0000 0436"
+```
+
+A chave Pix é um caso à parte: em vez de `format` e `strip`, ela tem `type`, que diz
+o tipo da chave. Ela precisa estar como o Banco Central guarda (sem máscara, e-mail e
+chave aleatória em minúsculas):
+
+```ruby
+BrValidators::Pix.type("+5511987654321")             # => :phone
+BrValidators::Pix.type("maria.souza@exemplo.com.br") # => :email
+BrValidators::Pix.valid?("123.456.789-09")           # => false (chave de CPF não tem máscara)
 ```
 
 E, em projetos Rails, a validação no model:
