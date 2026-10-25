@@ -25,32 +25,9 @@ module BrValidators
   end
 end
 
-# validates :cpf, cpf: true
-class CpfValidator < BrValidators::DocumentValidator
-  DOCUMENT = BrValidators::CPF
-  ERROR = :cpf_invalid
-end
-
-# validates :cnpj, cnpj: true
-class CnpjValidator < BrValidators::DocumentValidator
-  DOCUMENT = BrValidators::CNPJ
-  ERROR = :cnpj_invalid
-end
-
-# validates :cns, cns: true
-class CnsValidator < BrValidators::DocumentValidator
-  DOCUMENT = BrValidators::CNS
-  ERROR = :cns_invalid
-end
-
-# validates :chave_pix, pix: true
-class PixValidator < BrValidators::DocumentValidator
-  DOCUMENT = BrValidators::Pix
-  ERROR = :pix_invalid
-end
-
-# validates :linha_digitavel, boleto: true
-class BoletoValidator < BrValidators::DocumentValidator
-  DOCUMENT = BrValidators::Boleto
-  ERROR = :boleto_invalid
-end
+# Um arquivo por validador (o Rails espera uma classe por arquivo).
+require_relative "validators/cpf_validator"
+require_relative "validators/cnpj_validator"
+require_relative "validators/cns_validator"
+require_relative "validators/pix_validator"
+require_relative "validators/boleto_validator"
