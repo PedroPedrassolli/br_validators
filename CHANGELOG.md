@@ -5,7 +5,7 @@ As mudanças de cada versão ficam aqui. O projeto segue o
 
 ## [Não lançado]
 
-- Página para testar os validadores no navegador (https://br-validators-gem.vercel.app).
+- Página para testar os validadores no navegador (https://br-validators.vercel.app).
 
 ## [0.1.0] - 2026-10-25
 

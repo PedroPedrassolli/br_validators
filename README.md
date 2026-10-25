@@ -10,8 +10,8 @@ No `Gemfile`:
 gem "br_validators"
 ```
 
-> A versão 0.1.0 está pronta e vai ser publicada no RubyGems em breve. Até lá, use direto
-> do GitHub: `gem "br_validators", github: "PedroPedrassolli/br_validators"`.
+Ou direto: `gem install br_validators`. A gem está publicada no
+[RubyGems](https://rubygems.org/gems/br_validators).
 
 ## O que tem
 
@@ -81,7 +81,7 @@ mensagens de erro em português e inglês.
 
 ## Página de teste
 
-Dá para testar cada validador no navegador em https://br-validators-gem.vercel.app. A página
+Dá para testar cada validador no navegador em https://br-validators.vercel.app. A página
 (`public/`) é HTML e JavaScript puro e chama uma função Ruby da Vercel
 (`api/validar.rb`) que usa a própria gem, então as regras ficam num lugar só:
 
