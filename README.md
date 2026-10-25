@@ -1,0 +1,49 @@
+# br_validators
+
+Gem Ruby para validar e formatar documentos brasileiros, sem dependências.
+
+> Em desenvolvimento. Ainda não está publicada no RubyGems.
+
+## O que vai ter na primeira versão
+
+| Documento | Observação |
+| --- | --- |
+| CPF | |
+| CNPJ | numérico e alfanumérico (o formato novo da Receita Federal, a partir de julho de 2026) |
+| CNS | Cartão Nacional de Saúde |
+| Chave Pix | CPF, CNPJ, e-mail, celular e chave aleatória |
+| Boleto | linha digitável |
+
+Cada documento terá os mesmos três métodos:
+
+```ruby
+BrValidators::CPF.valid?("123.456.789-09") # => true
+BrValidators::CPF.format("12345678909")    # => "123.456.789-09"
+BrValidators::CPF.strip("123.456.789-09")  # => "12345678909"
+```
+
+E, em projetos Rails, a validação no model:
+
+```ruby
+validates :cpf, cpf: true
+```
+
+Já existem boas gems para CPF e CNPJ. A ideia aqui é juntar num lugar só os documentos
+que costumam aparecer em sistemas brasileiros (inclusive CNS, Pix e boleto), com
+mensagens de erro em português e inglês.
+
+## Desenvolvimento
+
+Precisa de Ruby 3.3 ou mais novo.
+
+```sh
+bundle install
+bundle exec rake test   # testes (a cobertura mínima é 100% das linhas)
+bundle exec rubocop     # estilo
+```
+
+O passo a passo para contribuir está no [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Licença
+
+[MIT](LICENSE)

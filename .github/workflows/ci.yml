@@ -1,0 +1,88 @@
+# Roda os testes e o lint a cada push na main e em todo pull request.
+name: CI
+
+# Mudança só em Markdown (README, CHANGELOG...) não precisa de CI.
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["**.md"]
+  pull_request:
+    paths-ignore: ["**.md"]
+
+permissions:
+  contents: read
+
+# Um push novo cancela a execução anterior da mesma branch.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Confere a sintaxe dos próprios workflows e os scripts bash (shellcheck).
+  workflows:
+    name: Workflows (actionlint)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: actionlint
+        env:
+          VERSION: 1.7.7
+        run: |
+          curl -sSfL "https://github.com/rhysd/actionlint/releases/download/v$VERSION/actionlint_${VERSION}_linux_amd64.tar.gz" |
+            tar xz actionlint
+          # Cada problema vira uma anotação no PR, com arquivo e linha.
+          # (As aspas simples são de propósito: o $err é do template do actionlint.)
+          # shellcheck disable=SC2016
+          format='{{range $err := .}}::error file={{$err.Filepath}},line={{$err.Line}},col={{$err.Column}}::{{$err.Message}}
+          {{end}}'
+          if ! ./actionlint -format "$format" 2> actionlint.log; then
+            [ -s actionlint.log ] && echo "::error title=actionlint::$(tr '\n' ' ' < actionlint.log)"
+            exit 1
+          fi
+
+  # A gem roda em todas as versões do Ruby que ainda têm suporte.
+  test:
+    name: Testes (Ruby ${{ matrix.ruby }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.3", "3.4", "4.0"]
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      # O mínimo de 100% é cobrado pelo test/test_helper.rb.
+      - name: Testes
+        run: bundle exec rake test
+
+      - name: Cobertura
+        run: |
+          line=$(ruby -rjson -e 'puts JSON.parse(File.read("coverage/.last_run.json")).dig("result", "line")')
+          echo "::notice title=Cobertura (Ruby ${{ matrix.ruby }})::${line}% das linhas executadas pelos testes"
+
+      # Confere que o pacote da gem é montado sem erro.
+      - name: Montar a gem
+        run: gem build br_validators.gemspec
+
+  lint:
+    name: Estilo (RuboCop)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+
+      - name: RuboCop
+        run: bundle exec rubocop

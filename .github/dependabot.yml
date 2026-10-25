@@ -1,0 +1,23 @@
+# O Dependabot abre PRs semanais atualizando as Actions dos workflows.
+# A gem não tem dependências em tempo de execução, e as ferramentas de
+# desenvolvimento (Minitest, RuboCop...) já vêm sempre na versão mais nova na CI,
+# porque o Gemfile.lock não é versionado.
+#
+# cooldown: espera alguns dias antes de sugerir uma versão recém-lançada.
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: America/Sao_Paulo
+    cooldown:
+      default-days: 3
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "deps(ci)"

@@ -1,0 +1,9 @@
+/coverage/
+/pkg/
+/.bundle/
+/vendor/
+*.gem
+
+# Gem não versiona o Gemfile.lock: quem usa a gem resolve as versões no próprio
+# projeto, e a CI testa sempre com as versões mais novas das ferramentas.
+Gemfile.lock
