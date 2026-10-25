@@ -23,6 +23,7 @@ on:
     types: [unlabeled, ready_for_review]
 
 permissions:
+  actions: read # ler as execuções da CI
   contents: write
   pull-requests: write
   statuses: read
@@ -46,9 +47,10 @@ jobs:
       group: auto-merge-${{ github.event.workflow_run.head_sha || github.event.sha || github.event.pull_request.head.sha }}
     steps:
       # Sempre a main (o script do Jira), nunca o código do PR.
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
+          persist-credentials: false
 
       - name: Mesclar, se o PR puder entrar
         env:
