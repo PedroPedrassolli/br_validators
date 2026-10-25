@@ -100,7 +100,7 @@ describe BrValidators::Boleto do
     end
 
     it "recusa texto com bytes inválidos sem levantar erro" do
-      refute subject.valid?("#{cobranca}\xFF".dup.force_encoding(Encoding::UTF_8))
+      refute subject.valid?("#{cobranca}\xFF".force_encoding(Encoding::UTF_8))
     end
   end
 end
