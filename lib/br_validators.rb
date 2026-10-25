@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "br_validators/version"
+require_relative "br_validators/cpf"
 
 # Validação e formatação de documentos brasileiros.
 #

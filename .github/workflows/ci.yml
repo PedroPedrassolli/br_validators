@@ -84,5 +84,6 @@ jobs:
           ruby-version: "3.4"
           bundler-cache: true
 
+      # O formato "github" transforma cada problema numa anotação no PR, com arquivo e linha.
       - name: RuboCop
-        run: bundle exec rubocop
+        run: bundle exec rubocop --format github
