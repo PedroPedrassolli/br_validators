@@ -1,4 +1,7 @@
-# Publica a gem no RubyGems quando uma tag vX.Y.Z chega ao GitHub.
+# Publica a gem no RubyGems. Dois jeitos de disparar:
+#   - botão "Run workflow" na aba Actions, com a main selecionada: o próprio
+#     workflow cria a tag vX.Y.Z da versão atual e publica;
+#   - criar e enviar a tag vX.Y.Z na main (git tag v0.2.0 && git push origin v0.2.0).
 #
 # Usa o "trusted publishing" do RubyGems: o RubyGems confia neste workflow
 # (pelo token OIDC que o GitHub gera na hora), então nenhum token de API fica
@@ -10,6 +13,7 @@ name: Release
 on:
   push:
     tags: ["v*"]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -22,7 +26,7 @@ jobs:
     environment: release
     permissions:
       id-token: write # o RubyGems confere que o pedido vem deste workflow
-      contents: write # o rake release confere a tag da versão
+      contents: write # o rake release cria e envia a tag da versão
     steps:
       - uses: actions/checkout@v7
         with:
@@ -33,14 +37,20 @@ jobs:
           ruby-version: "3.4"
           bundler-cache: true
 
-      # Evita publicar a versão errada: a tag v0.1.0 só passa se a gem for 0.1.0.
+      # Evita publicar a versão errada: pelo botão, só a partir da main; pela tag,
+      # a tag v0.1.0 só passa se a gem for 0.1.0.
       - name: Conferir a versão
         run: |
           version=$(ruby -Ilib -rbr_validators/version -e 'print BrValidators::VERSION')
-          if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ] && [ "$GITHUB_REF_NAME" != "main" ]; then
+            echo "::error title=Branch::Publique a partir da main (a branch escolhida foi $GITHUB_REF_NAME)."
+            exit 1
+          fi
+          if [ "$GITHUB_EVENT_NAME" = "push" ] && [ "$GITHUB_REF_NAME" != "v$version" ]; then
             echo "::error title=Versão::A tag $GITHUB_REF_NAME não bate com a versão da gem ($version)."
             exit 1
           fi
+          echo "::notice title=Versão::Publicando a versão $version."
 
       - name: Testes
         run: bundle exec rake test
