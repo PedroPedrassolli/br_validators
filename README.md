@@ -27,7 +27,7 @@ Ou direto: `gem install br_validators`. A gem está publicada no
 | Telefone | `Telefone` | fixo e celular, com os 67 DDDs da Anatel |
 | Placa | `Placa` | antiga e Mercosul, com conversão entre as duas |
 | RENAVAM | `RENAVAM` | 11 dígitos |
-| Chave de acesso | `ChaveAcesso` | NF-e, NFC-e, CT-e e MDF-e, inclusive com CNPJ alfanumérico |
+| Chave de acesso | `ChaveAcesso` | NF-e, NFC-e, CT-e e MDF-e, inclusive com CNPJ alfanumérico; confere UF e mês |
 | Processo judicial | `ProcessoCNJ` | numeração única do CNJ |
 
 A regra de cada um está no comentário do módulo, com o link da fonte oficial (Receita
@@ -48,9 +48,10 @@ BrValidators::CNPJ.format("12abc34501de35")     # => "12.ABC.345/01DE-35"
 BrValidators::CNS.format("898000000000436")      # => "898 0000 0000 0436"
 ```
 
-Pontos, hífens e espaços são ignorados em qualquer posição, inclusive o espaço não
-separável que vem junto ao copiar de um PDF ou de um site. Texto corrompido (bytes que
-não são UTF-8 válido) só dá `false`, sem erro. Passe sempre o documento como texto: um
+Pontos, traços e espaços são ignorados em qualquer posição, inclusive a meia-risca (–)
+e o espaço não separável que vêm junto ao copiar do Word, de um PDF ou de um site. O texto
+pode vir em qualquer encoding (UTF-8, Latin-1, UTF-16); texto corrompido só dá `false`,
+sem erro. Passe sempre o documento como texto: um
 número inteiro perde os zeros à esquerda (`01234567890` vira `1234567890`).
 
 A chave Pix é um caso à parte: em vez de `format` e `strip`, ela tem `type`, que diz
@@ -159,7 +160,10 @@ Dá para testar cada validador no navegador em https://br-validators.vercel.app.
 
 ```
 GET /api/validar?documento=cnpj&valor=12.ABC.345/01DE-35
-{"documento":"cnpj","valido":true,"formatado":"12.ABC.345/01DE-35","tipo":null}
+{"documento":"cnpj","valido":true,"formatado":"12.ABC.345/01DE-35","tipo":null,"detalhe":null}
+
+GET /api/validar?documento=titulo_eleitor&valor=1023%208501%200671
+{"documento":"titulo_eleitor","valido":true,"formatado":"1023 8501 0671","tipo":null,"detalhe":"PR"}
 ```
 
 ## Desenvolvimento

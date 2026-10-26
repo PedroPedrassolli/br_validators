@@ -58,6 +58,17 @@ const TIPOS = {
   mercosul: "placa Mercosul",
 };
 
+// Rótulo do "detalhe" que a API devolve para alguns documentos.
+const DETALHES = {
+  telefone: "DDD",
+  titulo_eleitor: "UF de emissão",
+  processo_cnj: "Segmento",
+  chave_acesso: "Modelo",
+};
+
+// Nome dos modelos mais comuns de documento fiscal (o código vem na chave de acesso).
+const MODELOS = { 55: "NF-e", 65: "NFC-e", 57: "CT-e", 67: "CT-e OS", 58: "MDF-e" };
+
 // Endereço da função Ruby que valida (api/validar.rb).
 export function urlDaValidacao(documento, valor) {
   const params = new URLSearchParams({ documento, valor: valor.trim() });
@@ -77,6 +88,13 @@ export function descrever(resposta) {
   const detalhes = [];
   if (resposta.formatado) detalhes.push(`Formatado: ${resposta.formatado}`);
   if (resposta.tipo) detalhes.push(`Tipo: ${TIPOS[resposta.tipo] ?? resposta.tipo}`);
+  if (resposta.detalhe) {
+    const valor =
+      resposta.documento === "chave_acesso" && MODELOS[resposta.detalhe]
+        ? `${MODELOS[resposta.detalhe]} (${resposta.detalhe})`
+        : resposta.detalhe;
+    detalhes.push(`${DETALHES[resposta.documento] ?? "Detalhe"}: ${valor}`);
+  }
 
   return { titulo: "Válido", detalhes, valido: true };
 }

@@ -92,9 +92,13 @@ module BrValidators
     module HTTP
       HEADERS = { "Accept" => "application/json", "User-Agent" => "br_validators/#{VERSION}" }.freeze
 
-      # Problemas de rede: não conectou, a conexão caiu, demorou demais ou o
-      # certificado falhou. Viram Consulta::Erro, para quem chama tratar um erro só.
-      ERROS_DE_REDE = [Timeout::Error, SocketError, SystemCallError, IOError, OpenSSL::SSL::SSLError].freeze
+      # Problemas de rede: não conectou, a conexão caiu, demorou demais, o
+      # certificado falhou ou a resposta veio quebrada (não é HTTP de verdade).
+      # Viram Consulta::Erro, para quem chama tratar um erro só.
+      ERROS_DE_REDE = [
+        Timeout::Error, SocketError, SystemCallError, IOError, OpenSSL::SSL::SSLError,
+        Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError
+      ].freeze
 
       def self.get(uri)
         http = Net::HTTP.new(uri.host, uri.port)

@@ -8,17 +8,19 @@ module BrValidators
   # 11 a 2 nos 10 primeiros (os 9 + o primeiro verificador). Se o resto da divisão
   # por 11 for 0 ou 1, o dígito é 0; senão, é 11 menos o resto.
   module CPF
-    # Caracteres de máscara que aceitamos na entrada: ponto, hífen e espaços.
-    # [:space:] pega também os espaços Unicode, como o espaço não separável que
-    # vem junto ao copiar um número de um PDF ou de um site.
-    MASK = /[.\-[:space:]]/
+    # Caracteres de máscara que aceitamos na entrada: ponto, traços e espaços.
+    # Ao copiar um número de um PDF, do Word ou de um site, o hífen pode virar
+    # meia-risca (–) ou hífen sem quebra, e o espaço pode virar o não separável:
+    # \p{Pd} pega qualquer traço e [:space:] qualquer espaço. Os outros módulos
+    # seguem a mesma ideia.
+    MASK = /[.\p{Pd}[:space:]]/
 
     # Tira a máscara: "123.456.789-09" vira "12345678909".
     # Não remove letras nem outros símbolos, para que valid? possa recusá-los.
-    # O scrub troca bytes inválidos (texto corrompido) por "�", que nunca passa na
-    # validação; sem ele, o gsub levantaria um erro em vez de devolver false.
+    # BrValidators.texto (texto.rb) converte para UTF-8 e troca bytes inválidos
+    # por "�", que nunca passa na validação.
     def self.strip(value)
-      value.to_s.scrub.gsub(MASK, "")
+      BrValidators.texto(value).gsub(MASK, "")
     end
 
     def self.valid?(value)

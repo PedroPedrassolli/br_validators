@@ -151,6 +151,11 @@ describe BrValidators::Consulta::HTTP do
     assert(linhas.any? { |linha| linha.start_with?("User-Agent: br_validators/") })
   end
 
+  it "transforma resposta que não é HTTP em Consulta::Erro" do
+    porta, = servidor_local("isto não é uma resposta HTTP\r\n\r\n")
+    assert_raises(BrValidators::Consulta::Erro) { subject.get(URI("http://127.0.0.1:#{porta}/")) }
+  end
+
   it "transforma falha de conexão em Consulta::Erro" do
     servidor = TCPServer.new("127.0.0.1", 0)
     porta = servidor.addr[1]

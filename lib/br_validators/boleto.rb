@@ -22,11 +22,10 @@ module BrValidators
     # Pontos, espaços e hífens que aparecem na linha impressa. A linha copiada do
     # PDF do boleto ou do site do banco costuma vir com espaço não separável, que
     # [:space:] também pega.
-    MASK = /[.\-[:space:]]/
+    MASK = /[.\p{Pd}[:space:]]/
 
-    # O scrub está explicado no CPF: texto corrompido vira inválido, sem erro.
     def self.strip(value)
-      value.to_s.scrub.gsub(MASK, "")
+      BrValidators.texto(value).gsub(MASK, "")
     end
 
     # :cobranca, :arrecadacao ou nil se a linha for inválida.

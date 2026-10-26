@@ -29,11 +29,10 @@ module BrValidators
     }.freeze
 
     # O título impresso mostra o número em grupos separados por espaço.
-    MASK = %r{[./\-[:space:]]}
+    MASK = %r{[./\p{Pd}[:space:]]}
 
-    # O scrub está explicado no CPF: texto corrompido vira inválido, sem erro.
     def self.strip(value)
-      value.to_s.scrub.gsub(MASK, "")
+      BrValidators.texto(value).gsub(MASK, "")
     end
 
     def self.valid?(value)

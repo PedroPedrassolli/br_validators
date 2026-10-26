@@ -90,5 +90,18 @@ describe BrValidators::CPF do
       refute subject.valid?(texto)
       assert_nil subject.format(texto)
     end
+
+    it "aceita traços tipográficos (meia-risca, travessão, hífen sem quebra)" do
+      assert subject.valid?("123.456.789\u201309")
+      assert subject.valid?("123.456.789\u201409")
+      assert subject.valid?("123.456.789\u201109")
+      assert_equal "12345678909", subject.strip("123.456.789\u201309")
+    end
+
+    it "aceita texto em outros encodings e em binário" do
+      assert subject.valid?("123.456.789-09".encode("UTF-16LE"))
+      assert subject.valid?("123.456.789\u201309".encode("Windows-1252"))
+      assert subject.valid?("123.456.789-09".b)
+    end
   end
 end

@@ -11,7 +11,9 @@ module BrValidators
   #   serie (3), nNF (9), tpEmis (1), cNF (8) e o dígito verificador (1)
   #
   # Com o CNPJ alfanumérico, os 12 primeiros caracteres do CNPJ podem ter letras;
-  # todo o resto continua só com números.
+  # todo o resto continua só com números. Além do dígito verificador, conferimos
+  # que o cUF é o código IBGE de uma UF e que o mês vai de 01 a 12 (sem isso, uma
+  # chave só de zeros passaria).
   #
   # O dígito verificador usa módulo 11 com pesos de 2 a 9, da direita para a
   # esquerda, sobre os 43 primeiros caracteres. Cada caractere vale o código ASCII
@@ -21,23 +23,34 @@ module BrValidators
   # Fontes: Manual de Orientação do Contribuinte da NF-e e Nota Técnica Conjunta
   # 2025.001 (CNPJ alfanumérico nos documentos fiscais eletrônicos), publicados no
   # Portal da NF-e. https://www.nfe.fazenda.gov.br/portal/
+  # Códigos das UFs: tabela do IBGE. https://www.ibge.gov.br/explica/codigos-dos-municipios.php
   module ChaveAcesso
     # 6 números (cUF e AAMM), 12 letras ou números (raiz e ordem do CNPJ) e 26
     # números (dígitos do CNPJ e o resto da chave).
     PATTERN = /\A\d{6}[0-9A-Z]{12}\d{26}\z/
 
+    # Códigos IBGE das 27 UFs (o cUF, dois primeiros dígitos da chave).
+    UFS_IBGE = %w[
+      11 12 13 14 15 16 17
+      21 22 23 24 25 26 27 28 29
+      31 32 33 35
+      41 42 43
+      50 51 52 53
+    ].freeze
+
     # O DANFE imprime a chave em grupos de 4, separados por espaço.
-    MASK = /[.\-[:space:]]/
+    MASK = /[.\p{Pd}[:space:]]/
 
     # Tira a máscara e passa as letras do CNPJ para maiúsculas.
-    # upcase(:ascii) e scrub estão explicados no CNPJ e no CPF.
+    # O upcase(:ascii) está explicado no CNPJ.
     def self.strip(value)
-      value.to_s.scrub.gsub(MASK, "").upcase(:ascii)
+      BrValidators.texto(value).gsub(MASK, "").upcase(:ascii)
     end
 
     def self.valid?(value)
       chave = strip(value)
       return false unless chave.match?(PATTERN)
+      return false unless UFS_IBGE.include?(chave[0, 2]) && chave[4, 2].between?("01", "12")
 
       chave[43] == check_digit(chave[0, 43])
     end

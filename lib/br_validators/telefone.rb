@@ -38,12 +38,11 @@ module BrValidators
     FIXO = /\A[2-5]\d{7}\z/
 
     # Parênteses, "+", pontos, hífens e espaços.
-    MASK = /[()+.\-[:space:]]/
+    MASK = /[()+.\p{Pd}[:space:]]/
 
     # Tira a máscara: "+55 (11) 98765-4321" vira "5511987654321".
-    # O scrub está explicado no CPF: texto corrompido vira inválido, sem erro.
     def self.strip(value)
-      value.to_s.scrub.gsub(MASK, "")
+      BrValidators.texto(value).gsub(MASK, "")
     end
 
     # :celular, :fixo ou nil se o número for inválido.

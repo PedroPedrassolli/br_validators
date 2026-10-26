@@ -15,11 +15,10 @@ module BrValidators
   # https://www.correios.com.br/enviar/precisa-de-ajuda/imagens/tudo-sobre-cep
   module CEP
     # Pontos, hífens e espaços (inclusive os Unicode, como o não separável).
-    MASK = /[.\-[:space:]]/
+    MASK = /[.\p{Pd}[:space:]]/
 
-    # O scrub está explicado no CPF: texto corrompido vira inválido, sem erro.
     def self.strip(value)
-      value.to_s.scrub.gsub(MASK, "")
+      BrValidators.texto(value).gsub(MASK, "")
     end
 
     # 8 dígitos. "00000-000" é o CEP que sistemas usam como "não informado";

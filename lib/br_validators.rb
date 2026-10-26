@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "br_validators/version"
+require_relative "br_validators/texto"
 require_relative "br_validators/cpf"
 require_relative "br_validators/cnpj"
 require_relative "br_validators/cns"

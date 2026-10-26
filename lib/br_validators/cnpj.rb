@@ -16,7 +16,7 @@ module BrValidators
   module CNPJ
     # Caracteres de máscara aceitos na entrada: ponto, barra, hífen e espaços
     # (inclusive os espaços Unicode, como o não separável).
-    MASK = %r{[./\-[:space:]]}
+    MASK = %r{[./\p{Pd}[:space:]]}
 
     # 12 caracteres alfanuméricos e 2 dígitos no final.
     PATTERN = /\A[0-9A-Z]{12}\d{2}\z/
@@ -27,9 +27,9 @@ module BrValidators
     #
     # upcase(:ascii) mexe só nas letras de a a z. O upcase normal segue o Unicode e
     # transforma "ı" (i sem ponto) em "I" e "ß" em "SS", o que faria um texto
-    # errado passar como CNPJ válido. O scrub está explicado no CPF.
+    # errado passar como CNPJ válido.
     def self.strip(value)
-      value.to_s.scrub.gsub(MASK, "").upcase(:ascii)
+      BrValidators.texto(value).gsub(MASK, "").upcase(:ascii)
     end
 
     def self.valid?(value)
