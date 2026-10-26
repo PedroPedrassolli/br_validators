@@ -9,15 +9,22 @@ require_relative "../lib/br_validators"
 #   GET /api/validar?documento=cpf&valor=123.456.789-09
 #   => {"documento":"cpf","valido":true,"formatado":"123.456.789-09","tipo":null}
 #
-# "tipo" só aparece preenchido para chave Pix (:cpf, :email...) e boleto
-# (:cobranca ou :arrecadacao).
+# "tipo" só aparece preenchido para chave Pix (:cpf, :email...), boleto
+# (:cobranca ou :arrecadacao), telefone (:celular ou :fixo) e placa (:antiga ou :mercosul).
 module ValidarApi
   DOCUMENTOS = {
     "cpf" => BrValidators::CPF,
     "cnpj" => BrValidators::CNPJ,
     "cns" => BrValidators::CNS,
     "pix" => BrValidators::Pix,
-    "boleto" => BrValidators::Boleto
+    "boleto" => BrValidators::Boleto,
+    "cep" => BrValidators::CEP,
+    "telefone" => BrValidators::Telefone,
+    "placa" => BrValidators::Placa,
+    "renavam" => BrValidators::RENAVAM,
+    "titulo_eleitor" => BrValidators::TituloEleitor,
+    "processo_cnj" => BrValidators::ProcessoCNJ,
+    "chave_acesso" => BrValidators::ChaveAcesso
   }.freeze
 
   # Nenhum documento tem mais que isso; recusa textos enormes logo de cara.

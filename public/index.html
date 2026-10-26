@@ -6,7 +6,7 @@
     <title>br_validators: teste os validadores</title>
     <meta
       name="description"
-      content="Teste no navegador a gem Ruby br_validators: CPF, CNPJ alfanumérico, CNS, chave Pix e boleto."
+      content="Teste no navegador a gem Ruby br_validators: CPF, CNPJ alfanumérico, CNS, Pix, boleto, CEP, telefone, placa, RENAVAM e mais."
     />
     <!-- O site também abre em br-validators-gem.vercel.app; o canonical diz qual é o principal. -->
     <link rel="canonical" href="https://br-validators.vercel.app/" />
@@ -16,7 +16,7 @@
     <meta property="og:title" content="br_validators: teste os validadores" />
     <meta
       property="og:description"
-      content="Teste no navegador a gem Ruby br_validators: CPF, CNPJ alfanumérico, CNS, chave Pix e boleto."
+      content="Teste no navegador a gem Ruby br_validators: CPF, CNPJ alfanumérico, CNS, Pix, boleto, CEP, telefone, placa, RENAVAM e mais."
     />
     <!-- Cor da barra do navegador no celular, igual ao fundo da página em cada tema. -->
     <meta name="theme-color" content="#f7f7f5" media="(prefers-color-scheme: light)" />
@@ -38,11 +38,28 @@
       <form id="formulario">
         <label for="documento">Documento</label>
         <select id="documento" name="documento">
-          <option value="cpf">CPF</option>
-          <option value="cnpj">CNPJ (numérico ou alfanumérico)</option>
-          <option value="cns">CNS (Cartão Nacional de Saúde)</option>
-          <option value="pix">Chave Pix</option>
-          <option value="boleto">Linha digitável de boleto</option>
+          <optgroup label="Pessoas e empresas">
+            <option value="cpf">CPF</option>
+            <option value="cnpj">CNPJ (numérico ou alfanumérico)</option>
+            <option value="cns">CNS (Cartão Nacional de Saúde)</option>
+            <option value="titulo_eleitor">Título de eleitor</option>
+          </optgroup>
+          <optgroup label="Pagamentos">
+            <option value="pix">Chave Pix</option>
+            <option value="boleto">Linha digitável de boleto</option>
+          </optgroup>
+          <optgroup label="Endereço e contato">
+            <option value="cep">CEP</option>
+            <option value="telefone">Telefone (fixo ou celular)</option>
+          </optgroup>
+          <optgroup label="Veículos">
+            <option value="placa">Placa (antiga ou Mercosul)</option>
+            <option value="renavam">RENAVAM</option>
+          </optgroup>
+          <optgroup label="Fiscal e jurídico">
+            <option value="chave_acesso">Chave de acesso (NF-e, CT-e)</option>
+            <option value="processo_cnj">Número de processo (CNJ)</option>
+          </optgroup>
         </select>
 
         <!--

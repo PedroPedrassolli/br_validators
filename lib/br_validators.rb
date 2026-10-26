@@ -6,6 +6,13 @@ require_relative "br_validators/cnpj"
 require_relative "br_validators/cns"
 require_relative "br_validators/pix"
 require_relative "br_validators/boleto"
+require_relative "br_validators/cep"
+require_relative "br_validators/telefone"
+require_relative "br_validators/placa"
+require_relative "br_validators/renavam"
+require_relative "br_validators/titulo_eleitor"
+require_relative "br_validators/processo_cnj"
+require_relative "br_validators/chave_acesso"
 
 # Validação e formatação de documentos brasileiros.
 #
@@ -15,7 +22,9 @@ require_relative "br_validators/boleto"
 #   format(valor)  -> o documento com a máscara, ou nil se for inválido
 #   strip(valor)   -> o documento sem a máscara
 # A chave Pix é a exceção: tem valid? e type, mas não format nem strip, porque
-# precisa estar exatamente como o Banco Central guarda. Pix e Boleto têm type.
+# precisa estar exatamente como o Banco Central guarda.
+# Alguns têm métodos a mais: type (Pix, Boleto, Telefone, Placa), uf (TituloEleitor),
+# segmento (ProcessoCNJ), modelo (ChaveAcesso), ddd (Telefone), mercosul e antiga (Placa).
 module BrValidators
 end
 

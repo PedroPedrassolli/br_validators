@@ -8,7 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors = ["Pedro Pedrassolli"]
   spec.email = ["pedropedrassolli@outlook.com"]
 
-  spec.summary = "Valida e formata CPF, CNPJ (inclusive alfanumérico), CNS, chave Pix e boleto."
+  spec.summary = "Valida e formata documentos brasileiros: CPF, CNPJ alfanumérico, CNS, Pix, boleto, CEP, " \
+                 "telefone, placa, RENAVAM, título de eleitor, chave de NF-e e processo do CNJ."
   spec.homepage = "https://github.com/PedroPedrassolli/br_validators"
   spec.license = "MIT"
 
