@@ -65,9 +65,10 @@ module BrValidators
       digits.chars.zip(weights.to_a).sum { |digit, weight| digit.to_i * weight }
     end
 
-    def self.check_digit(sum, uf)
+    # codigo_uf: "01" (SP) e "02" (MG) têm a regra especial do resto 0.
+    def self.check_digit(sum, codigo_uf)
       rest = sum % 11
-      return 1 if rest.zero? && %w[01 02].include?(uf)
+      return 1 if rest.zero? && %w[01 02].include?(codigo_uf)
 
       rest == 10 ? 0 : rest
     end
