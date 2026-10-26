@@ -5,13 +5,12 @@
 # dois juntos (ver .github/dependabot.yml).
 name: CI
 
-# Mudança só em Markdown (README, CHANGELOG...) não precisa de CI.
+# Roda em todo PR, inclusive nos que só mudam Markdown: o repositório é público
+# (minutos ilimitados) e o merge automático espera sempre a CI do commit.
 on:
   push:
     branches: [main]
-    paths-ignore: ["**.md"]
   pull_request:
-    paths-ignore: ["**.md"]
 
 permissions:
   contents: read
@@ -59,7 +58,7 @@ jobs:
       # anotação no PR ("arquivo:linha:coluna: nível: mensagem" → "::error ...").
       - name: shellcheck
         run: |
-          if ! problems=$(shellcheck --format=gcc .github/scripts/*.sh); then
+          if ! problems=$(shellcheck --format=gcc .github/scripts/*.sh scripts/*.sh); then
             sed -E 's/^([^:]+):([0-9]+):([0-9]+): [a-z]+: (.*)$/::error file=\1,line=\2,col=\3::\4/' <<<"$problems"
             exit 1
           fi

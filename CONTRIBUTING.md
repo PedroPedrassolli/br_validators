@@ -49,7 +49,7 @@ quebra quem já usa → 1.0.0.
 
 ## Cuidados
 
-- A CI não roda quando o PR só muda arquivos `.md`.
+- A CI roda em todo PR, inclusive nos que só mudam arquivos `.md`.
 - Merge feito pelo `GITHUB_TOKEN` não dispara outros workflows. Por isso o
   `auto-merge.yml` move o card do Jira ele mesmo.
 - Workflows disparados por `workflow_run` usam a versão que está na `main`.
@@ -57,7 +57,13 @@ quebra quem já usa → 1.0.0.
   Não troque por `@v7`: uma tag pode ser movida para outro código. O Dependabot atualiza.
 - O script `.github/scripts/jira-transition.sh` nunca deixa um job vermelho: se o card
   não existe ou o Jira não responde, ele só avisa.
-- O PR só entra depois que a prévia da Vercel é publicada. Se você mudar o `auto-merge.yml`,
-  abra o PR como rascunho: até o merge, quem decide é a versão antiga, que está na `main`.
+- Se você mudar o `auto-merge.yml`, abra o PR como rascunho: até o merge, quem decide é a
+  versão antiga, que está na `main`.
+- **Vercel no plano gratuito**: cada deploy guarda uma cópia da função Ruby, e o espaço
+  (Function Storage) é limitado. Por isso:
+  - não há prévia por PR (`git.deploymentEnabled` no `vercel.json`): só a `main` publica;
+  - a produção só é publicada quando a página, a API ou a gem mudam
+    (`scripts/vercel-ignorar-build.sh`). PR só de README ou de workflow não gera deploy.
+  - A CI cobre o que a prévia conferia: testa a função `api/validar.rb` e a página.
 - A função `api/validar.rb` responde com cache de 1 dia na Vercel (a resposta só depende
   da URL). Isso economiza execuções no plano gratuito.
