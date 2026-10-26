@@ -31,11 +31,10 @@ module BrValidators
     }.freeze
 
     # Pontos, hífens e espaços.
-    MASK = /[.\-[:space:]]/
+    MASK = /[.\p{Pd}[:space:]]/
 
-    # O scrub está explicado no CPF: texto corrompido vira inválido, sem erro.
     def self.strip(value)
-      value.to_s.scrub.gsub(MASK, "")
+      BrValidators.texto(value).gsub(MASK, "")
     end
 
     def self.valid?(value)

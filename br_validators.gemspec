@@ -10,6 +10,10 @@ Gem::Specification.new do |spec|
 
   spec.summary = "Valida e formata documentos brasileiros: CPF, CNPJ alfanumérico, CNS, Pix, boleto, CEP, " \
                  "telefone, placa, RENAVAM, título de eleitor, chave de NF-e e processo do CNJ."
+  spec.description = "Validação e formatação de documentos brasileiros sem dependências, com a regra de " \
+                     "cada um conferida na fonte oficial. Inclui validadores para ActiveModel (validates " \
+                     ":cpf, cpf: true) com mensagens em pt-BR e en, e consultas online opcionais pela " \
+                     "BrasilAPI (CEP, CNPJ, banco e DDD)."
   spec.homepage = "https://github.com/PedroPedrassolli/br_validators"
   spec.license = "MIT"
 

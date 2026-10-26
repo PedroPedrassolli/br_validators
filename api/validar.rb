@@ -7,10 +7,12 @@ require_relative "../lib/br_validators"
 # regras de validação ficam num lugar só.
 #
 #   GET /api/validar?documento=cpf&valor=123.456.789-09
-#   => {"documento":"cpf","valido":true,"formatado":"123.456.789-09","tipo":null}
+#   => {"documento":"cpf","valido":true,"formatado":"123.456.789-09","tipo":null,"detalhe":null}
 #
 # "tipo" só aparece preenchido para chave Pix (:cpf, :email...), boleto
 # (:cobranca ou :arrecadacao), telefone (:celular ou :fixo) e placa (:antiga ou :mercosul).
+# "detalhe" só para telefone (DDD), título de eleitor (UF), processo (segmento) e
+# chave de acesso (modelo).
 module ValidarApi
   DOCUMENTOS = {
     "cpf" => BrValidators::CPF,
@@ -25,6 +27,15 @@ module ValidarApi
     "titulo_eleitor" => BrValidators::TituloEleitor,
     "processo_cnj" => BrValidators::ProcessoCNJ,
     "chave_acesso" => BrValidators::ChaveAcesso
+  }.freeze
+
+  # Informação a mais que alguns documentos têm; a página mostra junto com o
+  # resultado. Ex.: o título "1023 8501 0671" dá detalhe "PR".
+  DETALHES = {
+    "telefone" => :ddd,
+    "titulo_eleitor" => :uf,
+    "processo_cnj" => :segmento,
+    "chave_acesso" => :modelo
   }.freeze
 
   # Nenhum documento tem mais que isso; recusa textos enormes logo de cara.
@@ -51,7 +62,8 @@ module ValidarApi
       documento: documento,
       valido: modulo.valid?(valor),
       formatado: modulo.respond_to?(:format) ? modulo.format(valor) : nil,
-      tipo: modulo.respond_to?(:type) ? modulo.type(valor) : nil
+      tipo: modulo.respond_to?(:type) ? modulo.type(valor) : nil,
+      detalhe: DETALHES.key?(documento) ? modulo.public_send(DETALHES[documento], valor) : nil
     }
   end
 end

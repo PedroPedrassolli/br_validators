@@ -26,6 +26,13 @@ describe BrValidators::ChaveAcesso do
       refute subject.valid?(alfanumerica.sub(/4\z/, "5"))
     end
 
+    it "recusa UF que não existe, mês inválido e a chave só de zeros, mesmo com o dígito certo" do
+      refute subject.valid?("99261011222333000181550010000001231123456780")
+      refute subject.valid?("35261311222333000181550010000001231123456784")
+      refute subject.valid?("35000011222333000181550010000001231123456783")
+      refute subject.valid?("0" * 44)
+    end
+
     it "recusa letra fora do CNPJ e tamanho errado" do
       refute subject.valid?("A5261011222333000181550010000001231123456783")
       refute subject.valid?("35261011222333000181A50010000001231123456783")

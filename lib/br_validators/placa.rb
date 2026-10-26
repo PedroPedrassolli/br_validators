@@ -18,12 +18,12 @@ module BrValidators
     MERCOSUL = /\A[A-Z]{3}\d[A-Z]\d{2}\z/
 
     # Pontos, hífens e espaços.
-    MASK = /[.\-[:space:]]/
+    MASK = /[.\p{Pd}[:space:]]/
 
     # Tira a máscara e passa as letras para maiúsculas: "abc-1234" vira "ABC1234".
-    # upcase(:ascii) e scrub estão explicados no CNPJ e no CPF.
+    # O upcase(:ascii) está explicado no CNPJ.
     def self.strip(value)
-      value.to_s.scrub.gsub(MASK, "").upcase(:ascii)
+      BrValidators.texto(value).gsub(MASK, "").upcase(:ascii)
     end
 
     # :antiga, :mercosul ou nil se a placa for inválida.

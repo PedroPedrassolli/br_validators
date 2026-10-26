@@ -30,6 +30,21 @@ describe("descrever", () => {
     ]);
   });
 
+  it("mostra o detalhe com o rótulo de cada documento", () => {
+    assert.deepEqual(
+      descrever({ documento: "titulo_eleitor", valido: true, formatado: "1023 8501 0671", detalhe: "PR" }).detalhes,
+      ["Formatado: 1023 8501 0671", "UF de emissão: PR"],
+    );
+    assert.deepEqual(descrever({ documento: "telefone", valido: true, detalhe: "11" }).detalhes, ["DDD: 11"]);
+  });
+
+  it("dá nome ao modelo da chave de acesso quando conhece o código", () => {
+    assert.deepEqual(descrever({ documento: "chave_acesso", valido: true, detalhe: "55" }).detalhes, [
+      "Modelo: NF-e (55)",
+    ]);
+    assert.deepEqual(descrever({ documento: "chave_acesso", valido: true, detalhe: "99" }).detalhes, ["Modelo: 99"]);
+  });
+
   it("traduz o tipo da chave Pix", () => {
     const texto = descrever({ documento: "pix", valido: true, formatado: null, tipo: "phone" });
     assert.deepEqual(texto.detalhes, ["Tipo: chave de celular"]);

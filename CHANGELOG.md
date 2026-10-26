@@ -3,6 +3,22 @@
 As mudanças de cada versão ficam aqui. O projeto segue o
 [versionamento semântico](https://semver.org/lang/pt-BR/).
 
+## [0.2.1] - 2026-10-26
+
+### Corrigido
+
+- Traços tipográficos (meia-risca, travessão, hífen sem quebra), comuns ao copiar do Word
+  ou de um PDF, contam como máscara, como o hífen comum.
+- Texto em outros encodings (Latin-1, Windows-1252, UTF-16) é convertido para UTF-8 antes
+  da validação (`BrValidators.texto`); antes, UTF-16 levantava `Encoding::CompatibilityError`.
+- `ChaveAcesso` confere o código IBGE da UF e o mês: uma chave só de zeros passava.
+- `Consulta`: resposta quebrada (que não é HTTP) também vira `Consulta::Erro`.
+
+### Outros
+
+- A API da página de teste devolve `detalhe` (DDD, UF do título, segmento do processo e
+  modelo da chave de acesso).
+
 ## [0.2.0] - 2026-10-26
 
 ### Novo
