@@ -32,6 +32,18 @@ describe "api/validar.rb" do
     assert_equal "arrecadacao", subject["tipo"]
   end
 
+  it "valida os documentos novos, com o tipo do telefone e da placa" do
+    query.merge!("documento" => "telefone", "valor" => "+55 11 98765-4321")
+    assert_equal({ "documento" => "telefone", "valido" => true, "formatado" => "(11) 98765-4321",
+                   "tipo" => "celular" }, subject)
+  end
+
+  it "devolve o tipo da placa" do
+    query.merge!("documento" => "placa", "valor" => "abc-1234")
+    assert_equal "antiga", subject["tipo"]
+    assert_equal "ABC-1234", subject["formatado"]
+  end
+
   it "responde documento inválido com valido false" do
     query["valor"] = "111.111.111-11"
     refute subject["valido"]
@@ -46,7 +58,7 @@ describe "api/validar.rb" do
 
   it "recusa documento desconhecido sem guardar em cache" do
     query["documento"] = "rg"
-    assert_match(/cpf, cnpj, cns, pix, boleto/, subject["erro"])
+    assert_match(/cpf, cnpj, cns, pix, boleto, cep, telefone/, subject["erro"])
     assert_equal 400, response.status
     assert_nil response["Cache-Control"]
   end

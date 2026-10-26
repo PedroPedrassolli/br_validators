@@ -19,6 +19,17 @@ describe("descrever", () => {
     assert.deepEqual(texto, { titulo: "Válido", detalhes: ["Formatado: 123.456.789-09"], valido: true });
   });
 
+  it("traduz o tipo do telefone e da placa", () => {
+    assert.deepEqual(descrever({ valido: true, formatado: "(11) 98765-4321", tipo: "celular" }).detalhes, [
+      "Formatado: (11) 98765-4321",
+      "Tipo: celular",
+    ]);
+    assert.deepEqual(descrever({ valido: true, formatado: "BRA2E19", tipo: "mercosul" }).detalhes, [
+      "Formatado: BRA2E19",
+      "Tipo: placa Mercosul",
+    ]);
+  });
+
   it("traduz o tipo da chave Pix", () => {
     const texto = descrever({ documento: "pix", valido: true, formatado: null, tipo: "phone" });
     assert.deepEqual(texto.detalhes, ["Tipo: chave de celular"]);
@@ -45,7 +56,20 @@ describe("descrever", () => {
 
 describe("EXEMPLOS", () => {
   it("tem um exemplo para cada documento do formulário", () => {
-    assert.deepEqual(Object.keys(EXEMPLOS), ["cpf", "cnpj", "cns", "pix", "boleto"]);
+    assert.deepEqual(Object.keys(EXEMPLOS), [
+      "cpf",
+      "cnpj",
+      "cns",
+      "pix",
+      "boleto",
+      "titulo_eleitor",
+      "cep",
+      "telefone",
+      "placa",
+      "renavam",
+      "chave_acesso",
+      "processo_cnj",
+    ]);
   });
 });
 
@@ -54,13 +78,15 @@ describe("CAMPOS", () => {
     assert.deepEqual(Object.keys(CAMPOS), Object.keys(EXEMPLOS));
     for (const { dica, teclado } of Object.values(CAMPOS)) {
       assert.ok(dica.length > 0);
-      assert.ok(["numeric", "text"].includes(teclado));
+      assert.ok(["numeric", "tel", "text"].includes(teclado));
     }
   });
 
   it("usa o teclado com letras onde o documento pode ter letras ou símbolos", () => {
     assert.equal(CAMPOS.cnpj.teclado, "text");
     assert.equal(CAMPOS.pix.teclado, "text");
+    assert.equal(CAMPOS.placa.teclado, "text");
+    assert.equal(CAMPOS.telefone.teclado, "tel");
     assert.equal(CAMPOS.cpf.teclado, "numeric");
   });
 });

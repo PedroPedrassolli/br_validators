@@ -21,7 +21,9 @@ PR de fork não é mesclado sozinho: precisa de revisão.
   todos os dígitos iguais, com e sem máscara, espaços, tamanho errado, letras onde não pode.
 - Cobertura de 100% das linhas (o `test/test_helper.rb` cobra isso).
 - Regra de documento sempre conferida na fonte oficial (Receita Federal, Ministério da
-  Saúde, Banco Central, FEBRABAN). Coloque o link no comentário do módulo.
+  Saúde, Banco Central, FEBRABAN, Anatel, CONTRAN/Denatran, CNJ, Portal da NF-e). Coloque o
+  link no comentário do módulo. Sem fonte oficial pública (como PIS/NIS e CNH hoje), o
+  documento fica de fora; o título de eleitor é a exceção documentada no módulo.
 - Dados de exemplo sempre fictícios, gerados para os testes.
 
 ## Comandos

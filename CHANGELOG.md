@@ -3,6 +3,22 @@
 As mudanças de cada versão ficam aqui. O projeto segue o
 [versionamento semântico](https://semver.org/lang/pt-BR/).
 
+## [Não lançado]
+
+### Novo
+
+- `BrValidators::CEP`: formato do CEP.
+- `BrValidators::Telefone`: fixo e celular, com os 67 DDDs da Anatel; `type`, `format` e `ddd`.
+- `BrValidators::Placa`: placa antiga e Mercosul; `type`, `mercosul` e `antiga` para converter.
+- `BrValidators::RENAVAM`: 11 dígitos com dígito verificador.
+- `BrValidators::TituloEleitor`: 12 dígitos, dígitos verificadores e `uf`.
+- `BrValidators::ProcessoCNJ`: numeração única do CNJ (módulo 97) e `segmento`.
+- `BrValidators::ChaveAcesso`: chave de NF-e, NFC-e, CT-e e MDF-e, inclusive com CNPJ
+  alfanumérico, e `modelo`.
+- Validadores do ActiveModel para todos eles (`cep: true`, `telefone: true`, `placa: true`,
+  `renavam: true`, `titulo_eleitor: true`, `processo_cnj: true`, `chave_acesso: true`),
+  com mensagens em pt-BR e en.
+
 ## [0.1.1] - 2026-10-25
 
 ### Corrigido

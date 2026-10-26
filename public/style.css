@@ -93,6 +93,13 @@ button {
   color: inherit;
 }
 
+/* Sem isto, o select fica da largura da opção mais longa e passa da tela no celular. */
+select,
+input {
+  width: 100%;
+  min-width: 0;
+}
+
 input {
   font-family: ui-monospace, monospace;
 }

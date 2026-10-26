@@ -15,13 +15,25 @@ Ou direto: `gem install br_validators`. A gem está publicada no
 
 ## O que tem
 
-| Documento | Observação |
-| --- | --- |
-| CPF | |
-| CNPJ | numérico e alfanumérico (o formato novo da Receita Federal, a partir de julho de 2026) |
-| CNS | Cartão Nacional de Saúde |
-| Chave Pix | CPF, CNPJ, e-mail, celular e chave aleatória |
-| Boleto | linha digitável de cobrança e de arrecadação |
+| Documento | Módulo | Observação |
+| --- | --- | --- |
+| CPF | `CPF` | |
+| CNPJ | `CNPJ` | numérico e alfanumérico (o formato novo da Receita Federal, a partir de julho de 2026) |
+| CNS | `CNS` | Cartão Nacional de Saúde |
+| Título de eleitor | `TituloEleitor` | 12 dígitos, com a UF de emissão |
+| Chave Pix | `Pix` | CPF, CNPJ, e-mail, celular e chave aleatória |
+| Boleto | `Boleto` | linha digitável de cobrança e de arrecadação |
+| CEP | `CEP` | só o formato (o CEP não tem dígito verificador) |
+| Telefone | `Telefone` | fixo e celular, com os 67 DDDs da Anatel |
+| Placa | `Placa` | antiga e Mercosul, com conversão entre as duas |
+| RENAVAM | `RENAVAM` | 11 dígitos |
+| Chave de acesso | `ChaveAcesso` | NF-e, NFC-e, CT-e e MDF-e, inclusive com CNPJ alfanumérico |
+| Processo judicial | `ProcessoCNJ` | numeração única do CNJ |
+
+A regra de cada um está no comentário do módulo, com o link da fonte oficial (Receita
+Federal, Ministério da Saúde, Banco Central, FEBRABAN, Anatel, CONTRAN, CNJ...). O
+título de eleitor é a exceção: o TSE não publica o cálculo, e a regra usada é a que a
+OBMEP documenta.
 
 Cada documento tem os mesmos três métodos:
 
@@ -59,6 +71,24 @@ BrValidators::Boleto.type("00190.00009 02345.678904 12345.678176 1 1000000001234
 BrValidators::Boleto.valid?("826700000019000000000000000000000000000000000000")      # => true
 ```
 
+Os documentos novos seguem o mesmo jeito, com alguns métodos a mais:
+
+```ruby
+BrValidators::Telefone.type("+55 11 98765-4321")   # => :celular
+BrValidators::Telefone.format("1134567890")        # => "(11) 3456-7890"
+
+BrValidators::Placa.type("ABC1C34")                 # => :mercosul
+BrValidators::Placa.mercosul("ABC-1234")            # => "ABC1C34"
+BrValidators::Placa.antiga("ABC1C34")               # => "ABC1234"
+
+BrValidators::TituloEleitor.uf("1023 8501 0671")    # => "PR"
+BrValidators::ProcessoCNJ.segmento("0000456-41.2023.5.02.9999") # => "Justiça do Trabalho"
+BrValidators::ChaveAcesso.modelo("3526 1011 2223 3300 0181 5500 1000 0001 2311 2345 6783") # => "55" (NF-e)
+
+BrValidators::CEP.format("01001000")                # => "01001-000"
+BrValidators::RENAVAM.valid?("00123456789")         # => true
+```
+
 ## Rails e ActiveModel
 
 Em projetos com ActiveModel (todo app Rails tem), os validadores entram sozinhos:
@@ -70,19 +100,32 @@ class Cliente < ApplicationRecord
   validates :cartao_sus, cns: true
   validates :chave_pix, pix: { message: "não parece uma chave Pix" }
   validates :linha_digitavel, boleto: true
+  validates :cep, cep: true
+  validates :celular, telefone: true
+  validates :titulo, titulo_eleitor: true
+end
+
+class Veiculo < ApplicationRecord
+  validates :placa, placa: true
+  validates :renavam, renavam: true
+end
+
+class Nota < ApplicationRecord
+  validates :chave, chave_acesso: true
+  validates :processo, processo_cnj: true
 end
 ```
 
 As mensagens de erro vêm em português (`pt-BR`) e inglês (`en`). Para trocar o texto,
-sobrescreva as chaves `errors.messages.cpf_invalid`, `cnpj_invalid`, `cns_invalid`,
-`pix_invalid` e `boleto_invalid` no seu arquivo de tradução.
+sobrescreva as chaves `errors.messages.<documento>_invalid` (`cpf_invalid`, `cep_invalid`,
+`titulo_eleitor_invalid`...) no seu arquivo de tradução.
 
-Os validadores se chamam `CpfValidator`, `CnpjValidator`, `CnsValidator`, `PixValidator` e
-`BoletoValidator`, no nível de cima, porque é assim que o Rails encontra `cpf: true`.
+Os validadores ficam no nível de cima (`CpfValidator`, `TelefoneValidator`,
+`TituloEleitorValidator`...), porque é assim que o Rails encontra `cpf: true`.
 
 Já existem boas gems para CPF e CNPJ. A ideia aqui é juntar num lugar só os documentos
-que costumam aparecer em sistemas brasileiros (inclusive CNS, Pix e boleto), com
-mensagens de erro em português e inglês.
+que costumam aparecer em sistemas brasileiros (inclusive CNS, Pix, boleto, placa, NF-e e
+processo judicial), com mensagens de erro em português e inglês.
 
 ## Página de teste
 
