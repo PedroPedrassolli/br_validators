@@ -123,16 +123,21 @@ describe BrValidators::Consulta::HTTP do
     pedido = Queue.new
     Thread.new do
       conexao = servidor.accept
-      linhas = []
-      while (linha = conexao.gets) && linha != "\r\n"
-        linhas << linha
-      end
-      pedido << linhas
+      pedido << ler_cabecalhos(conexao)
       conexao.write(resposta)
       conexao.close
       servidor.close
     end
     [servidor.addr[1], pedido]
+  end
+
+  # Linhas do pedido HTTP até a linha em branco que fecha os cabeçalhos.
+  def ler_cabecalhos(conexao)
+    linhas = []
+    while (linha = conexao.gets) && linha != "\r\n"
+      linhas << linha
+    end
+    linhas
   end
 
   it "faz o GET e devolve o status e o corpo" do
