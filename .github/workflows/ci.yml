@@ -92,13 +92,15 @@ jobs:
           echo "::notice title=Cobertura (Ruby ${{ matrix.ruby }})::${line}% das linhas executadas pelos testes"
 
       # Monta o pacote e instala como quem usa a gem: fora do Bundler e fora da pasta
-      # do projeto. Pega arquivo que ficou de fora do spec.files (ex.: as traduções).
+      # do projeto. Pega arquivo que ficou de fora do spec.files (ex.: as traduções
+      # ou as consultas online, que têm require próprio).
       - name: Montar e instalar a gem
         run: |
           gem build br_validators.gemspec
           gem install --local ./br_validators-*.gem
           cd "$RUNNER_TEMP"
           ruby -e 'require "br_validators"; abort "a gem instalada não valida" unless BrValidators::CPF.valid?("123.456.789-09")'
+          ruby -e 'require "br_validators/consulta"; abort "faltou a consulta" unless defined?(BrValidators::Consulta::HTTP)'
 
   lint:
     name: Estilo (RuboCop)
