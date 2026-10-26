@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Entrada comum a todos os validadores: ver BrValidators.texto abaixo.
 module BrValidators
   # Converte o valor recebido em texto UTF-8 antes de tirar a máscara. Todos os
   # validadores passam por aqui, para tratar a entrada do mesmo jeito:
