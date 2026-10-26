@@ -17,7 +17,10 @@ fi
 
 # HEAD^ é o commit anterior da main. Um merge que só mudou README, testes ou
 # workflows não mexe em nada do que vai para o ar.
-if git diff --quiet HEAD^ HEAD -- api public lib vercel.json Gemfile; then
+# O ":!" exclui arquivos da comparação: a API não carrega as consultas online
+# (consulta.rb) nem usa o número da versão (version.rb).
+if git diff --quiet HEAD^ HEAD -- api public lib vercel.json Gemfile \
+  ':!lib/br_validators/consulta.rb' ':!lib/br_validators/version.rb'; then
   echo "Nada da página, da API ou da gem mudou: sem deploy."
   exit 0
 fi
