@@ -25,6 +25,8 @@ PR de fork não é mesclado sozinho: precisa de revisão.
   link no comentário do módulo. Sem fonte oficial pública (como PIS/NIS e CNH hoje), o
   documento fica de fora; o título de eleitor é a exceção documentada no módulo.
 - Dados de exemplo sempre fictícios, gerados para os testes.
+- Os testes nunca chamam a internet: as consultas online (`consulta.rb`) usam um cliente
+  falso, e o cliente HTTP é testado contra um servidor local.
 
 ## Comandos
 

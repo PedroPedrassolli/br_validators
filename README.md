@@ -89,6 +89,30 @@ BrValidators::CEP.format("01001000")                # => "01001-000"
 BrValidators::RENAVAM.valid?("00123456789")         # => true
 ```
 
+## Consultas online
+
+Validar não diz se o documento existe. Para isso há consultas pela
+[BrasilAPI](https://brasilapi.com.br), um serviço gratuito, de código aberto e sem chave.
+Elas são opcionais (a validação continua funcionando sem internet):
+
+```ruby
+require "br_validators/consulta"
+
+BrValidators::Consulta.cep("01001-000")
+# => {"cep"=>"01001000", "state"=>"SP", "city"=>"São Paulo", "street"=>..., ...}
+BrValidators::Consulta.cnpj("11.222.333/0001-81") # => dados da Receita Federal (razao_social, uf, ...)
+BrValidators::Consulta.banco("001")                # => {"code"=>1, "name"=>"BCO DO BRASIL S.A.", ...}
+BrValidators::Consulta.ddd("11")                   # => {"state"=>"SP", "cities"=>[...]}
+```
+
+- Dado inválido devolve `nil` sem chamar a internet; dado que a BrasilAPI não encontra
+  também devolve `nil`.
+- Se a BrasilAPI não responder em 5 segundos ou der erro, levanta
+  `BrValidators::Consulta::Erro`.
+- Para usar cache ou outro cliente HTTP, troque o `BrValidators::Consulta.cliente` por um
+  objeto com `get(uri)` que devolva `[status, corpo]`.
+- A resposta é o JSON da BrasilAPI como `Hash`. Os campos são os dela e podem mudar.
+
 ## Rails e ActiveModel
 
 Em projetos com ActiveModel (todo app Rails tem), os validadores entram sozinhos:

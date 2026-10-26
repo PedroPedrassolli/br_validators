@@ -3,9 +3,15 @@
 As mudanças de cada versão ficam aqui. O projeto segue o
 [versionamento semântico](https://semver.org/lang/pt-BR/).
 
-## [Não lançado]
+## [0.2.0] - 2026-10-26
 
 ### Novo
+
+- `BrValidators::Consulta` (opcional, `require "br_validators/consulta"`): consultas online
+  pela BrasilAPI de CEP (endereço), CNPJ (dados da Receita), banco (código de compensação)
+  e DDD (UF e cidades). Só usa a biblioteca padrão do Ruby; valida o dado antes de
+  consultar, devolve `nil` quando não acha e levanta `BrValidators::Consulta::Erro` quando
+  a BrasilAPI não responde.
 
 - `BrValidators::CEP`: formato do CEP.
 - `BrValidators::Telefone`: fixo e celular, com os 67 DDDs da Anatel; `type`, `format` e `ddd`.
