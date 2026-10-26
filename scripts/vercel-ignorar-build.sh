@@ -17,10 +17,14 @@ fi
 
 # HEAD^ é o commit anterior da main. Um merge que só mudou README, testes ou
 # workflows não mexe em nada do que vai para o ar.
-# O ":!" exclui arquivos da comparação: a API não carrega as consultas online
-# (consulta.rb) nem usa o número da versão (version.rb).
+# O ":!" exclui arquivos da comparação. A função da Vercel não carrega:
+#   - as consultas online (consulta.rb);
+#   - o número da versão (version.rb);
+#   - a integração com o ActiveModel (active_model.rb, validators/ e locale/), que
+#     só entra quando o projeto tem o Rails, e a Vercel instala sem as gems de teste.
 if git diff --quiet HEAD^ HEAD -- api public lib vercel.json Gemfile \
-  ':!lib/br_validators/consulta.rb' ':!lib/br_validators/version.rb'; then
+  ':!lib/br_validators/consulta.rb' ':!lib/br_validators/version.rb' \
+  ':!lib/br_validators/active_model.rb' ':!lib/br_validators/validators' ':!lib/br_validators/locale'; then
   echo "Nada da página, da API ou da gem mudou: sem deploy."
   exit 0
 fi
