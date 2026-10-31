@@ -19,27 +19,39 @@
       content="Teste no navegador a gem Ruby br_validators: CPF, CNPJ alfanumérico, CNS, Pix, boleto, CEP, telefone, placa, RENAVAM e mais."
     />
     <!-- Cor da barra do navegador no celular, igual ao fundo da página em cada tema. -->
-    <meta name="theme-color" content="#eef2ec" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#121714" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#eef1e8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#111612" media="(prefers-color-scheme: dark)" />
+    <meta property="og:image" content="https://br-validators.vercel.app/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="br_validators: um CPF com o carimbo de válido" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- A fonte datilografada aparece logo no título: carregar junto com o CSS evita a troca de fonte na tela. -->
+    <link rel="preload" href="/fontes/courier-prime-bold.woff" as="font" type="font/woff" crossorigin />
+    <link rel="preload" href="/fontes/courier-prime-regular.woff" as="font" type="font/woff" crossorigin />
     <link rel="stylesheet" href="/style.css" />
     <script type="module" src="/app.mjs"></script>
   </head>
   <body>
+    <!-- A faixa do topo tem a trama de linhas finas (trama.svg), como o fundo dos documentos. -->
     <header class="topo">
-      <h1>br_validators</h1>
-      <p class="lema">
-        Gem Ruby que valida e formata documentos brasileiros. Escolha um documento e teste: quem responde é a própria
-        gem, e nada do que você digita é guardado.
-      </p>
-      <div class="instalar">
-        <code id="comando">gem install br_validators</code>
-        <button type="button" class="copiar" data-copiar="comando">Copiar</button>
+      <div class="coluna">
+        <h1>br_validators</h1>
+        <p class="lema">
+          Valide e formate documentos brasileiros com uma gem Ruby. Escolha um documento e teste aqui: quem responde é a
+          própria gem, e nada do que você digita é guardado.
+        </p>
+        <div class="instalar">
+          <code id="comando">gem install br_validators</code>
+          <button type="button" class="copiar" data-copiar="comando">Copiar</button>
+        </div>
       </div>
     </header>
 
-    <main>
-      <form id="formulario">
+    <main class="coluna">
+      <!-- O formulário é a "ficha": um papel por cima da faixa, com o resultado carimbado no pé. -->
+      <form id="formulario" class="ficha">
         <!--
           Botões de rádio de verdade, com cara de etiqueta: dá para escolher com as
           setas do teclado e o leitor de tela anuncia "1 de 12". A ordem e os
@@ -88,10 +100,10 @@
           <button type="submit" id="validar">Validar</button>
           <button type="button" id="exemplo" class="secundario">Testar com um exemplo</button>
         </div>
-      </form>
 
-      <!-- Preenchido pelo app.mjs depois de validar. -->
-      <section id="resultado" class="resultado" aria-live="polite"></section>
+        <!-- Preenchido pelo app.mjs depois de validar. -->
+        <section id="resultado" class="resultado" aria-live="polite"></section>
+      </form>
 
       <section class="codigo" aria-labelledby="titulo-codigo">
         <div class="codigo-topo">
@@ -106,7 +118,7 @@
       </section>
     </main>
 
-    <footer>
+    <footer class="coluna">
       <p>
         Código aberto no <a href="https://github.com/PedroPedrassolli/br_validators">GitHub</a>, publicado no
         <a href="https://rubygems.org/gems/br_validators">RubyGems</a>. Feito por

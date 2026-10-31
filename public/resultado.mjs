@@ -1,6 +1,7 @@
 // Funções da página que não mexem no HTML, para dar para testar com node --test.
 
 // Tudo o que a página precisa saber de cada documento, na ordem dos botões:
+// - mascara: o modelo do formato, que aparece apagado no campo vazio;
 // - exemplo: fictício, o mesmo usado nos testes da gem;
 // - nome e feminino: para escrever "CPF válido" ou "Placa válida";
 // - rotulo e dica: o que aparece em cima e embaixo do campo;
@@ -12,6 +13,7 @@
 // - regra: o que mais precisa estar certo quando o tamanho já está.
 export const DOCUMENTOS = {
   cpf: {
+    mascara: "000.000.000-00",
     exemplo: "123.456.789-09",
     nome: "CPF",
     rotulo: "Número do CPF",
@@ -24,6 +26,7 @@ export const DOCUMENTOS = {
     regra: "Só números, e os dois últimos (verificadores) precisam bater com os outros nove. Todos iguais não vale.",
   },
   cnpj: {
+    mascara: "00.000.000/0000-00",
     exemplo: "12.ABC.345/01DE-35",
     nome: "CNPJ",
     rotulo: "Número do CNPJ",
@@ -36,6 +39,7 @@ export const DOCUMENTOS = {
     regra: "Os dois últimos são verificadores e precisam bater com os 12 primeiros.",
   },
   cns: {
+    mascara: "000 0000 0000 0000",
     exemplo: "898 0000 0000 0436",
     nome: "CNS",
     rotulo: "Número do Cartão Nacional de Saúde",
@@ -48,6 +52,7 @@ export const DOCUMENTOS = {
     regra: "Começa com 1, 2, 7, 8 ou 9 e precisa passar na conta de verificação do Ministério da Saúde.",
   },
   titulo_eleitor: {
+    mascara: "0000 0000 0000",
     exemplo: "1023 8501 0671",
     nome: "Título de eleitor",
     rotulo: "Número do título de eleitor",
@@ -60,6 +65,7 @@ export const DOCUMENTOS = {
     regra: "O 9º e o 10º dígitos são a UF (de 01 a 28) e os dois últimos são verificadores.",
   },
   pix: {
+    mascara: "+5511987654321",
     exemplo: "+5511987654321",
     nome: "Chave Pix",
     feminino: true,
@@ -73,6 +79,7 @@ export const DOCUMENTOS = {
       "Não é nenhum tipo de chave: CPF ou CNPJ só com números, celular com +55 e DDD, e-mail em minúsculas ou chave aleatória.",
   },
   boleto: {
+    mascara: "00000.00000 00000.000000 00000.000000 0 00000000000000",
     exemplo: "00190.00009 02345.678904 12345.678176 1 10000000012345",
     nome: "Boleto",
     rotulo: "Linha digitável do boleto",
@@ -85,6 +92,7 @@ export const DOCUMENTOS = {
     regra: "Cada bloco da linha tem um dígito verificador: confira se nenhum número foi trocado.",
   },
   cep: {
+    mascara: "00000-000",
     exemplo: "01001-000",
     nome: "CEP",
     rotulo: "CEP",
@@ -97,6 +105,7 @@ export const DOCUMENTOS = {
     regra: "Só números, e 00000-000 não vale.",
   },
   telefone: {
+    mascara: "(00) 00000-0000",
     exemplo: "(11) 98765-4321",
     nome: "Telefone",
     rotulo: "Telefone com DDD",
@@ -109,6 +118,7 @@ export const DOCUMENTOS = {
       "Precisa de um DDD que existe e de um número de fixo (8 dígitos, começando de 2 a 5) ou de celular (9 dígitos, começando com 9).",
   },
   placa: {
+    mascara: "ABC1D23",
     exemplo: "ABC-1234",
     nome: "Placa",
     feminino: true,
@@ -122,6 +132,7 @@ export const DOCUMENTOS = {
     regra: "Três letras e quatro números (ABC1234) ou o padrão Mercosul, com uma letra na 5ª posição (ABC1D23).",
   },
   renavam: {
+    mascara: "00000000000",
     exemplo: "00123456789",
     nome: "RENAVAM",
     rotulo: "Código RENAVAM",
@@ -134,6 +145,7 @@ export const DOCUMENTOS = {
     regra: "Só números, e o último (verificador) precisa bater com os outros dez. Todos iguais não vale.",
   },
   chave_acesso: {
+    mascara: "0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000",
     exemplo: "3526 1011 2223 3300 0181 5500 1000 0001 2311 2345 6783",
     nome: "Chave de acesso",
     feminino: true,
@@ -147,6 +159,7 @@ export const DOCUMENTOS = {
     regra: "O último dígito é verificador, e a chave também precisa ter uma UF e um mês de emissão que existem.",
   },
   processo_cnj: {
+    mascara: "0000000-00.0000.0.00.0000",
     exemplo: "0000123-37.2024.8.26.9999",
     nome: "Processo",
     rotulo: "Número do processo",

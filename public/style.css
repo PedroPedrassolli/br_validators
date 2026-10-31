@@ -1,36 +1,57 @@
-/* Cores em variáveis para trocar tudo de uma vez no tema escuro. A ideia vem do
-   papel de documento: fundo verde-acinzentado, texto cor de tinta e o azul-violeta
-   do carimbo de cartório como destaque. Contrastes conferidos (WCAG):
-   texto 14,8:1, texto suave 6,4:1, bordas de campo pelo menos 3,2:1. */
+/* A página imita um documento brasileiro: papel verde-acinzentado, a trama de
+   linhas finas dos papéis de segurança no topo, texto datilografado (Courier
+   Prime) e o resultado como um carimbo de cartório.
+
+   Cores em variáveis para trocar tudo no tema escuro. Contrastes conferidos
+   (WCAG): texto pelo menos 13:1, texto suave 5,7:1, bordas de campo 3,2:1. */
+
+@font-face {
+  font-family: "Courier Prime";
+  src: url("/fontes/courier-prime-regular.woff") format("woff");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Courier Prime";
+  src: url("/fontes/courier-prime-bold.woff") format("woff");
+  font-weight: 700;
+  font-display: swap;
+}
+
 :root {
-  --papel: #eef2ec;
-  --superficie: #fafbf8;
-  --tinta: #15201a;
-  --suave: #4c5a52;
-  --linha: #7c8a82;
-  --carimbo: #3b3fa6;
+  --papel: #eef1e8;
+  --ficha: #fbfbf6;
+  --campo: #f0f2ea;
+  --codigo: #e5e9e0;
+  --tinta: #18231c;
+  --suave: #4f5c54;
+  --linha: #7d8a82;
+  --carimbo: #3a3fa8;
   --sobre-carimbo: #ffffff;
   --valido: #1c6b3d;
-  --valido-fundo: #e0efe3;
   --invalido: #a42a20;
-  --invalido-fundo: #f6e1dd;
-  --mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace;
+  --trama: 0.5;
+  --sombra: rgb(24 35 28 / 0.28);
+  --datilografia: "Courier Prime", ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
   color-scheme: light dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --papel: #121714;
-    --superficie: #1a211c;
-    --tinta: #e4ebe6;
-    --suave: #a4b1a9;
+    --papel: #111612;
+    --ficha: #19211b;
+    --campo: #131a15;
+    --codigo: #0c110e;
+    --tinta: #e3eae4;
+    --suave: #a3b0a8;
     --linha: #6c7b73;
-    --carimbo: #abb2ff;
-    --sobre-carimbo: #121714;
-    --valido: #84d6a0;
-    --valido-fundo: #18301f;
+    --carimbo: #aeb4ff;
+    --sobre-carimbo: #111612;
+    --valido: #86d7a2;
     --invalido: #f29c92;
-    --invalido-fundo: #3a1e1a;
+    --trama: 0.22;
+    --sombra: rgb(0 0 0 / 0.55);
   }
 }
 
@@ -47,68 +68,139 @@ body {
     sans-serif;
 }
 
-/* Uma coluna só, alinhada à esquerda, com 16 px de margem no celular. */
-.topo,
-main,
-footer {
-  max-width: 44rem;
+/* Uma coluna central, com 16 px de margem no celular. */
+.coluna {
+  max-width: 46rem;
   margin: 0 auto;
   padding: 0 1rem;
 }
 
-.topo {
-  padding-top: clamp(2rem, 6vw, 4rem);
+code,
+pre {
+  font-family: var(--datilografia);
 }
 
-/* O nome da gem, em fonte de código, é a identidade da página. */
+a {
+  color: var(--carimbo);
+}
+
+:focus-visible {
+  outline: 3px solid var(--carimbo);
+  outline-offset: 2px;
+}
+
+/* --- Topo: faixa com a trama, o nome da gem e a instalação --- */
+
+.topo {
+  position: relative;
+  padding: clamp(2.25rem, 7vw, 4.5rem) 0 5.5rem;
+  border-bottom: 1px solid var(--linha);
+  overflow: hidden;
+}
+
+/* A trama fica numa camada própria, só no pé da faixa (atrás da instalação e do
+   topo da ficha, longe do texto), e some aos poucos para cima. */
+.topo::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 8rem;
+  background: url("/trama.svg") repeat-x center bottom -1rem / 240px 160px;
+  opacity: var(--trama);
+  mask-image: linear-gradient(to top, #000 45%, transparent);
+  pointer-events: none;
+}
+
+.topo .coluna {
+  position: relative;
+}
+
 h1 {
   margin: 0;
-  font-family: var(--mono);
-  font-size: clamp(2rem, 7vw, 2.75rem);
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  font: 700 clamp(2.4rem, 9vw, 3.75rem) / 1 var(--datilografia);
+  letter-spacing: -0.02em;
 }
 
 .lema {
-  max-width: 34em;
-  margin: 0.75rem 0 1.25rem;
+  max-width: 33em;
+  margin: 1rem 0 1.5rem;
   font-size: 1.125rem;
-  color: var(--suave);
 }
 
-code,
-pre {
-  font-family: var(--mono);
-}
-
-/* Comando de instalação: o primeiro passo de quem gostou do que viu. */
+/* Comando de instalação, como uma linha de terminal com o botão de copiar. */
 .instalar {
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem 0.75rem;
+  gap: 0.5rem 0.9rem;
   max-width: 100%;
-  padding: 0.35rem 0.35rem 0.35rem 0.9rem;
+  padding: 0.35rem 0.35rem 0.35rem 0.95rem;
   border: 1px solid var(--linha);
   border-radius: 0.5rem;
-  background: var(--superficie);
+  background: var(--ficha);
 }
 
-/* Em telas bem estreitas o botão desce para a linha de baixo, sem cortar o comando. */
 .instalar code {
   white-space: nowrap;
 }
 
-main {
-  margin-top: clamp(2rem, 6vw, 3rem);
+.instalar code::before {
+  content: "$ ";
+  color: var(--suave);
 }
 
-form {
+/* No celular, letra menor para o comando e o botão caberem na mesma linha. */
+@media (max-width: 24rem) {
+  .instalar {
+    gap: 0.5rem;
+  }
+
+  .instalar code {
+    font-size: 0.8125rem;
+  }
+
+  .instalar button {
+    padding: 0.3rem 0.55rem;
+  }
+}
+
+@media (max-width: 21rem) {
+  .instalar code {
+    font-size: 0.75rem;
+  }
+
+  .instalar code::before {
+    content: none;
+  }
+}
+
+/* --- A ficha: o formulário como um papel por cima da faixa --- */
+
+.ficha {
+  position: relative;
   display: grid;
   gap: 0.5rem;
+  margin-top: -3.5rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid var(--linha);
+  border-radius: 0.75rem;
+  background: var(--ficha);
+  box-shadow: 0 18px 40px -26px var(--sombra);
+  /* O carimbo entra maior e inclinado: sem isto, na animação ele passaria da
+     borda e criaria uma rolagem para o lado no celular. */
+  overflow: hidden;
 }
 
-/* --- Escolha do documento: botões de rádio com cara de etiqueta --- */
+/* Fio fino por dentro da borda, como a moldura dos formulários impressos. */
+.ficha::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid var(--linha);
+  border-radius: 0.55rem;
+  opacity: 0.35;
+  pointer-events: none;
+}
 
 .documentos {
   margin: 0 0 1.25rem;
@@ -120,14 +212,14 @@ form {
 legend,
 .rotulo {
   padding: 0;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
   font-weight: 650;
 }
 
 .opcoes {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.45rem;
 }
 
 /* O rádio continua na página (teclado e leitor de tela), mas invisível: quem
@@ -141,7 +233,7 @@ legend,
 
 .opcoes span {
   display: inline-block;
-  padding: 0.4rem 0.85rem;
+  padding: 0.35rem 0.8rem;
   border: 1px solid var(--linha);
   border-radius: 999px;
   font-size: 0.9375rem;
@@ -156,7 +248,7 @@ legend,
 .opcoes input:checked + span {
   background: var(--tinta);
   border-color: var(--tinta);
-  color: var(--papel);
+  color: var(--ficha);
 }
 
 .opcoes input:focus-visible + span {
@@ -164,44 +256,45 @@ legend,
   outline-offset: 2px;
 }
 
-/* --- Campo e botões --- */
-
+/* O campo é a linha onde se escreve: fundo leve e um traço forte embaixo. */
 input[type="text"] {
   width: 100%;
   min-width: 0;
-  padding: 0.8rem 1rem;
-  border: 1.5px solid var(--linha);
-  border-radius: 0.5rem;
-  background: var(--superficie);
+  padding: 0.65rem 0.85rem 0.5rem;
+  border: 0;
+  border-bottom: 2px solid var(--tinta);
+  border-radius: 0.4rem 0.4rem 0 0;
+  background: var(--campo);
   color: inherit;
-  font: 1.375rem/1.3 var(--mono);
+  font: 1.6rem/1.25 var(--datilografia);
   letter-spacing: 0.02em;
 }
 
 input[type="text"]:focus {
-  border-color: var(--carimbo);
+  border-bottom-color: var(--carimbo);
+}
+
+/* O modelo do formato (000.000.000-00) aparece apagado enquanto o campo está vazio. */
+input[type="text"]::placeholder {
+  color: var(--suave);
+  opacity: 0.6;
 }
 
 .dica {
-  margin: 0;
+  margin: 0.1rem 0 0;
   font-size: 0.875rem;
   color: var(--suave);
-}
-
-:focus-visible {
-  outline: 3px solid var(--carimbo);
-  outline-offset: 2px;
 }
 
 .acoes {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-top: 0.75rem;
+  margin-top: 1rem;
 }
 
 button {
-  padding: 0.65rem 1.1rem;
+  padding: 0.65rem 1.15rem;
   border: 1.5px solid var(--carimbo);
   border-radius: 0.5rem;
   background: var(--carimbo);
@@ -227,61 +320,27 @@ button:disabled {
   opacity: 0.6;
 }
 
-/* --- Resultado: um carimbo, como os de cartório --- */
+/* --- Resultado: no pé da ficha, depois de um picote --- */
 
 .resultado:not(:empty) {
-  margin-top: 2rem;
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px dashed var(--linha);
 }
 
-.carimbo {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.9rem 0.4rem 0.7rem;
-  /* A folga na largura deixa os cantos do carimbo inclinado dentro da tela. */
-  max-width: calc(100% - 0.75rem);
-  border: 2.5px solid currentColor;
-  border-radius: 0.4rem;
-  font-size: clamp(1.125rem, 5vw, 1.375rem);
-  font-weight: 750;
-  line-height: 1.25;
-  transform: rotate(-1.5deg);
-}
-
-.carimbo svg {
-  width: 1.4rem;
-  height: 1.4rem;
-  flex: none;
-}
-
-.carimbo[data-estado="valido"] {
-  color: var(--valido);
-  background: var(--valido-fundo);
-}
-
-.carimbo[data-estado="invalido"],
-.carimbo[data-estado="erro"] {
-  color: var(--invalido);
-  background: var(--invalido-fundo);
-}
-
-/* O único movimento da página: o carimbo "batendo" quando o resultado chega. */
-@media (prefers-reduced-motion: no-preference) {
-  .carimbo {
-    animation: carimbar 180ms ease-out;
+/* No computador, os dados à esquerda e o carimbo à direita. */
+@media (min-width: 40rem) {
+  .resultado:not(:empty) {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
   }
 
-  @keyframes carimbar {
-    from {
-      opacity: 0;
-      transform: scale(1.12) rotate(-4deg);
-    }
+  .resultado .carimbo {
+    grid-column: 2;
+    grid-row: 1 / span 2;
   }
-}
-
-.motivo {
-  max-width: 34em;
-  margin: 0.9rem 0 0;
 }
 
 .carregando {
@@ -289,32 +348,99 @@ button:disabled {
   color: var(--suave);
 }
 
-/* Os dados do documento válido: rótulo à esquerda, valor à direita. */
+/* O carimbo: borda dupla, letra datilografada em caixa alta, inclinado e com
+   falhas de tinta (a máscara tinta.png). O texto no HTML continua "CPF válido",
+   em caixa normal, para o leitor de tela. */
+.carimbo {
+  position: relative;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0.25rem 0.5rem;
+  padding: 0.6rem 1.05rem 0.55rem 0.85rem;
+  border: 2.5px solid currentColor;
+  border-radius: 0.55rem;
+  font: 700 clamp(1.15rem, 4.6vw, 1.45rem) / 1.15 var(--datilografia);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+  mask: url("/tinta.png") 0 0 / 96px;
+}
+
+.carimbo::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1.5px solid currentColor;
+  border-radius: 0.35rem;
+}
+
+.carimbo svg {
+  width: 1.45rem;
+  height: 1.45rem;
+  flex: none;
+}
+
+.carimbo[data-estado="valido"] {
+  color: var(--valido);
+}
+
+.carimbo[data-estado="invalido"],
+.carimbo[data-estado="erro"] {
+  color: var(--invalido);
+}
+
+/* O único movimento da página: o carimbo batendo no papel quando o resultado chega. */
+@media (prefers-reduced-motion: no-preference) {
+  .carimbo {
+    animation: carimbar 280ms cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+
+  @keyframes carimbar {
+    0% {
+      opacity: 0;
+      transform: scale(1.35) rotate(-8deg);
+    }
+
+    60% {
+      opacity: 1;
+      transform: scale(0.96) rotate(-2deg);
+    }
+  }
+}
+
+.motivo {
+  max-width: 32em;
+  margin: 0;
+}
+
+/* Os dados do documento válido: rótulo em cima, valor datilografado embaixo. */
 .dados {
   display: grid;
-  align-items: baseline;
-  grid-template-columns: max-content minmax(0, 1fr);
-  gap: 0.4rem 1.25rem;
-  margin: 1rem 0 0;
+  gap: 0.75rem;
+  margin: 0;
 }
 
 .dados dt {
+  font-size: 0.875rem;
   color: var(--suave);
 }
 
 .dados dd {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.5rem;
-  margin: 0;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin: 0.1rem 0 0;
+  font-size: 1.2rem;
   overflow-wrap: anywhere;
 }
 
 /* --- Trecho de código --- */
 
 .codigo {
-  margin: 2.5rem 0 3rem;
+  margin: 2.75rem 0 3rem;
 }
 
 .codigo-topo {
@@ -322,30 +448,28 @@ button:disabled {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
 }
 
 h2 {
   margin: 0;
-  font-size: 1rem;
-  font-weight: 650;
+  font: 700 1.2rem/1.3 var(--datilografia);
 }
 
 pre {
   margin: 0;
-  padding: 1rem;
+  padding: 1.1rem 1.2rem;
   overflow-x: auto;
-  border: 1px solid var(--linha);
-  border-radius: 0.5rem;
-  background: var(--superficie);
-  font-size: 0.875rem;
+  border-radius: 0.6rem;
+  background: var(--codigo);
+  font-size: 0.95rem;
   line-height: 1.6;
 }
 
 /* No celular, letra um pouco menor para as chamadas caberem sem rolar. */
 @media (max-width: 30rem) {
   pre {
-    font-size: 0.8125rem;
+    font-size: 0.85rem;
   }
 }
 
@@ -354,7 +478,7 @@ pre {
 }
 
 .nota {
-  margin: 0.75rem 0 0;
+  margin: 0.8rem 0 0;
   font-size: 0.875rem;
   color: var(--suave);
 }
@@ -370,6 +494,9 @@ footer {
   color: var(--suave);
 }
 
-a {
-  color: var(--carimbo);
+/* O fio fica no parágrafo, para começar e terminar junto com o texto. */
+footer p {
+  margin: 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--linha);
 }

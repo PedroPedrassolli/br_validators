@@ -23,26 +23,26 @@ module BrValidators
     end
 
     def self.valid?(value)
+      valid_stripped?(strip(value))
+    end
+
+    # O RENAVAM não tem máscara: devolve os 11 dígitos, ou nil se for inválido.
+    def self.format(value)
       renavam = strip(value)
+      valid_stripped?(renavam) ? renavam : nil
+    end
+
+    # A regra, com o RENAVAM já sem máscara. O dígito é o módulo 11 com pesos de
+    # 2 a 9 (Digitos, em digitos.rb).
+    def self.valid_stripped?(renavam)
       return false unless renavam.match?(/\A\d{11}\z/)
 
       # 00000000000, 11111111111... não são códigos reais.
       return false if renavam.squeeze.size == 1
 
-      renavam[10] == check_digit(renavam[0, 10])
+      renavam[10] == Digitos.modulo11(renavam[0, 10]).to_s
     end
 
-    # O RENAVAM não tem máscara: devolve os 11 dígitos, ou nil se for inválido.
-    def self.format(value)
-      valid?(value) ? strip(value) : nil
-    end
-
-    def self.check_digit(digits)
-      sum = digits.reverse.chars.each_with_index.sum { |digit, index| digit.to_i * ((index % 8) + 2) }
-      rest = sum % 11
-      (rest < 2 ? 0 : 11 - rest).to_s
-    end
-
-    private_class_method :check_digit
+    private_class_method :valid_stripped?
   end
 end

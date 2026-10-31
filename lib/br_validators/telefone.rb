@@ -47,14 +47,7 @@ module BrValidators
 
     # :celular, :fixo ou nil se o número for inválido.
     def self.type(value)
-      numero = nacional(value)
-      return nil unless numero && DDDS.include?(numero[0, 2])
-
-      assinante = numero[2..]
-      return :celular if assinante.match?(CELULAR)
-      return :fixo if assinante.match?(FIXO)
-
-      nil
+      type_nacional(nacional(value))
     end
 
     def self.valid?(value)
@@ -63,15 +56,26 @@ module BrValidators
 
     # Devolve "(11) 98765-4321" ou "(11) 3456-7890", ou nil se for inválido.
     def self.format(value)
-      return nil unless valid?(value)
-
       numero = nacional(value)
+      return nil unless type_nacional(numero)
+
       "(#{numero[0, 2]}) #{numero[2...-4]}-#{numero[-4..]}"
     end
 
     # O DDD ("11"), ou nil se o número for inválido.
     def self.ddd(value)
-      valid?(value) ? nacional(value)[0, 2] : nil
+      numero = nacional(value)
+      type_nacional(numero) ? numero[0, 2] : nil
+    end
+
+    # A regra, com o número já como devolvido por nacional (ou nil).
+    def self.type_nacional(numero)
+      return nil unless numero && DDDS.include?(numero[0, 2])
+
+      assinante = numero[2..]
+      return :celular if assinante.match?(CELULAR)
+
+      :fixo if assinante.match?(FIXO)
     end
 
     # O número só com DDD e assinante (10 ou 11 dígitos), sem o código do país
@@ -88,6 +92,6 @@ module BrValidators
       digits.size.between?(10, 11) ? digits : nil
     end
 
-    private_class_method :nacional
+    private_class_method :type_nacional, :nacional
   end
 end

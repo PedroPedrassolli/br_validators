@@ -1,5 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- Ícone da aba: um "certo" nas cores da página. -->
-  <rect width="32" height="32" rx="7" fill="#1f5f4a" />
-  <path d="M9 16.5l4.5 4.5L23 11.5" fill="none" stroke="#f7f7f5" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- Ícone da aba: um carimbo de "certo" no azul da página, com borda dupla. -->
+  <rect x="2.5" y="2.5" width="27" height="27" rx="5" fill="#fbfbf6" stroke="#3a3fa8" stroke-width="2.5" />
+  <rect x="6" y="6" width="20" height="20" rx="3" fill="none" stroke="#3a3fa8" stroke-width="1.2" />
+  <path d="M10.5 16.5l3.8 3.8 7.4-8.3" fill="none" stroke="#3a3fa8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
 </svg>

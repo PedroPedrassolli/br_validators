@@ -3,6 +3,29 @@
 As mudanças de cada versão ficam aqui. O projeto segue o
 [versionamento semântico](https://semver.org/lang/pt-BR/).
 
+## [0.3.1] - 2026-10-31
+
+### Corrigido
+
+- `Consulta.banco` e `Consulta.ddd` aceitam número e texto em qualquer encoding:
+  `Consulta.banco("341".encode("UTF-16LE"))` levantava `Encoding::CompatibilityError`.
+
+### Mudado
+
+- Mais rápido, com os mesmos resultados (conferido em 72 mil entradas contra a 0.3.0):
+  `format`, `uf`, `ddd`, `segmento` e `modelo` tiram a máscara uma vez só, e as contas
+  de dígito verificador não criam uma lista por caractere. `CPF.format` ficou cerca de
+  3 vezes mais rápido; a chave de acesso e o boleto, cerca de 2 vezes.
+- A conta de módulo 11 com pesos de 2 a 9, que estava repetida no CNPJ, no RENAVAM, na
+  chave de acesso e no boleto, ficou num lugar só (`digitos.rb`, interno da gem).
+
+### Outros
+
+- Página de teste com visual novo, de documento: fonte datilografada, a trama dos papéis
+  de segurança no topo, o formulário como uma ficha e o resultado como um carimbo. O
+  campo mostra o modelo do formato, o resultado aparece na tela no celular e a página
+  tem imagem para quando o link é compartilhado.
+
 ## [0.3.0] - 2026-10-31
 
 ### Novo
