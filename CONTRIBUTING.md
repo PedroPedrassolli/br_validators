@@ -34,6 +34,7 @@ PR de fork não é mesclado sozinho: precisa de revisão.
 | --- | --- |
 | `bundle exec rake test` | Testes com cobertura |
 | `bundle exec rubocop` | Estilo |
+| `bundle exec rbs -r uri -I sig validate` | Assinaturas de tipo (`sig/`); método público novo precisa de assinatura |
 | `node --test "test/js/*.test.mjs"` | Testes da página (`public/`) |
 | `npx prettier@3.8.1 --check public test/js vercel.json` | Formatação da página (mesma versão da CI) |
 

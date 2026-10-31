@@ -7,12 +7,16 @@ require_relative "../lib/br_validators"
 # regras de validação ficam num lugar só.
 #
 #   GET /api/validar?documento=cpf&valor=123.456.789-09
-#   => {"documento":"cpf","valido":true,"formatado":"123.456.789-09","tipo":null,"detalhe":null}
+#   => {"documento":"cpf","valido":true,"formatado":"123.456.789-09","tipo":null,"detalhe":null,
+#       "caracteres":11}
 #
 # "tipo" só aparece preenchido para chave Pix (:cpf, :email...), boleto
 # (:cobranca ou :arrecadacao), telefone (:celular ou :fixo) e placa (:antiga ou :mercosul).
 # "detalhe" só para telefone (DDD), título de eleitor (UF), processo (segmento) e
 # chave de acesso (modelo).
+# "caracteres" é o tamanho depois de tirar pontos, traços e espaços (nil para a
+# chave Pix, que não tem máscara). Com ele a página diz "tem 10, o CPF tem 11"
+# em vez de só "inválido".
 module ValidarApi
   DOCUMENTOS = {
     "cpf" => BrValidators::CPF,
@@ -63,7 +67,8 @@ module ValidarApi
       valido: modulo.valid?(valor),
       formatado: modulo.respond_to?(:format) ? modulo.format(valor) : nil,
       tipo: modulo.respond_to?(:type) ? modulo.type(valor) : nil,
-      detalhe: DETALHES.key?(documento) ? modulo.public_send(DETALHES[documento], valor) : nil
+      detalhe: DETALHES.key?(documento) ? modulo.public_send(DETALHES[documento], valor) : nil,
+      caracteres: modulo.respond_to?(:strip) ? modulo.strip(valor).size : nil
     }
   end
 end

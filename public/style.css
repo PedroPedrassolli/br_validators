@@ -1,26 +1,36 @@
-/* Cores em variáveis para trocar tudo de uma vez no tema escuro.
-   A borda tem contraste de pelo menos 3:1 com o fundo (mínimo da WCAG para
-   contornos de campos): 3,2:1 no tema claro e 3,5:1 no escuro. */
+/* Cores em variáveis para trocar tudo de uma vez no tema escuro. A ideia vem do
+   papel de documento: fundo verde-acinzentado, texto cor de tinta e o azul-violeta
+   do carimbo de cartório como destaque. Contrastes conferidos (WCAG):
+   texto 14,8:1, texto suave 6,4:1, bordas de campo pelo menos 3,2:1. */
 :root {
-  --fundo: #f7f7f5;
-  --texto: #1d1d1b;
-  --suave: #5c5c57;
-  --borda: #8a8a83;
-  --destaque: #1f5f4a;
-  --valido: #1f6b3a;
-  --invalido: #a3271f;
+  --papel: #eef2ec;
+  --superficie: #fafbf8;
+  --tinta: #15201a;
+  --suave: #4c5a52;
+  --linha: #7c8a82;
+  --carimbo: #3b3fa6;
+  --sobre-carimbo: #ffffff;
+  --valido: #1c6b3d;
+  --valido-fundo: #e0efe3;
+  --invalido: #a42a20;
+  --invalido-fundo: #f6e1dd;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace;
   color-scheme: light dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --fundo: #161615;
-    --texto: #ececea;
-    --suave: #a8a8a2;
-    --borda: #6e6e68;
-    --destaque: #7cc9a8;
-    --valido: #7ed49b;
-    --invalido: #f2948c;
+    --papel: #121714;
+    --superficie: #1a211c;
+    --tinta: #e4ebe6;
+    --suave: #a4b1a9;
+    --linha: #6c7b73;
+    --carimbo: #abb2ff;
+    --sobre-carimbo: #121714;
+    --valido: #84d6a0;
+    --valido-fundo: #18301f;
+    --invalido: #f29c92;
+    --invalido-fundo: #3a1e1a;
   }
 }
 
@@ -30,82 +40,156 @@
 
 body {
   margin: 0;
-  background: var(--fundo);
-  color: var(--texto);
+  background: var(--papel);
+  color: var(--tinta);
   font:
-    1rem/1.6 system-ui,
+    1rem/1.55 system-ui,
     sans-serif;
 }
 
-/* Cabeçalho, conteúdo e rodapé na mesma coluna central. */
-header,
+/* Uma coluna só, alinhada à esquerda, com 16 px de margem no celular. */
+.topo,
 main,
 footer {
-  max-width: 40rem;
+  max-width: 44rem;
   margin: 0 auto;
   padding: 0 1rem;
 }
 
-header {
-  padding-top: 3rem;
+.topo {
+  padding-top: clamp(2rem, 6vw, 4rem);
 }
 
-footer {
-  padding-bottom: 3rem;
-}
-
+/* O nome da gem, em fonte de código, é a identidade da página. */
 h1 {
-  margin: 0 0 0.5rem;
-  font-family: ui-monospace, monospace;
-  font-size: 2rem;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: clamp(2rem, 7vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
 }
 
-header p,
-footer,
-.dica {
+.lema {
+  max-width: 34em;
+  margin: 0.75rem 0 1.25rem;
+  font-size: 1.125rem;
   color: var(--suave);
 }
 
-.dica {
-  margin: 0;
-  font-size: 0.875rem;
+code,
+pre {
+  font-family: var(--mono);
+}
+
+/* Comando de instalação: o primeiro passo de quem gostou do que viu. */
+.instalar {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  max-width: 100%;
+  padding: 0.35rem 0.35rem 0.35rem 0.9rem;
+  border: 1px solid var(--linha);
+  border-radius: 0.5rem;
+  background: var(--superficie);
+}
+
+/* Em telas bem estreitas o botão desce para a linha de baixo, sem cortar o comando. */
+.instalar code {
+  white-space: nowrap;
+}
+
+main {
+  margin-top: clamp(2rem, 6vw, 3rem);
 }
 
 form {
   display: grid;
   gap: 0.5rem;
-  margin: 2rem 0;
 }
 
-label {
-  font-weight: 600;
-  margin-top: 0.75rem;
-}
+/* --- Escolha do documento: botões de rádio com cara de etiqueta --- */
 
-select,
-input,
-button {
-  font: inherit;
-  padding: 0.6rem 0.75rem;
-  border: 1px solid var(--borda);
-  border-radius: 0.4rem;
-  background: transparent;
-  color: inherit;
-}
-
-/* Sem isto, o select fica da largura da opção mais longa e passa da tela no celular. */
-select,
-input {
-  width: 100%;
+.documentos {
+  margin: 0 0 1.25rem;
+  padding: 0;
+  border: 0;
   min-width: 0;
 }
 
-input {
-  font-family: ui-monospace, monospace;
+legend,
+.rotulo {
+  padding: 0;
+  margin-bottom: 0.5rem;
+  font-weight: 650;
+}
+
+.opcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* O rádio continua na página (teclado e leitor de tela), mas invisível: quem
+   aparece é a etiqueta logo depois dele. */
+.opcoes input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.opcoes span {
+  display: inline-block;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--linha);
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.opcoes span:hover {
+  border-color: var(--tinta);
+}
+
+.opcoes input:checked + span {
+  background: var(--tinta);
+  border-color: var(--tinta);
+  color: var(--papel);
+}
+
+.opcoes input:focus-visible + span {
+  outline: 3px solid var(--carimbo);
+  outline-offset: 2px;
+}
+
+/* --- Campo e botões --- */
+
+input[type="text"] {
+  width: 100%;
+  min-width: 0;
+  padding: 0.8rem 1rem;
+  border: 1.5px solid var(--linha);
+  border-radius: 0.5rem;
+  background: var(--superficie);
+  color: inherit;
+  font: 1.375rem/1.3 var(--mono);
+  letter-spacing: 0.02em;
+}
+
+input[type="text"]:focus {
+  border-color: var(--carimbo);
+}
+
+.dica {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--suave);
 }
 
 :focus-visible {
-  outline: 3px solid var(--destaque);
+  outline: 3px solid var(--carimbo);
   outline-offset: 2px;
 }
 
@@ -113,20 +197,29 @@ input {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-top: 1rem;
+  margin-top: 0.75rem;
 }
 
 button {
+  padding: 0.65rem 1.1rem;
+  border: 1.5px solid var(--carimbo);
+  border-radius: 0.5rem;
+  background: var(--carimbo);
+  color: var(--sobre-carimbo);
+  font: inherit;
+  font-weight: 650;
   cursor: pointer;
-  background: var(--destaque);
-  border-color: var(--destaque);
-  color: var(--fundo);
-  font-weight: 600;
 }
 
-button.secundario {
+button.secundario,
+button.copiar {
   background: transparent;
-  color: var(--destaque);
+  color: var(--carimbo);
+}
+
+button.copiar {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.875rem;
 }
 
 button:disabled {
@@ -134,40 +227,149 @@ button:disabled {
   opacity: 0.6;
 }
 
-#resultado:not(:empty) {
-  margin-bottom: 2rem;
-  padding: 1rem 1.25rem;
-  border-left: 4px solid var(--borda);
+/* --- Resultado: um carimbo, como os de cartório --- */
+
+.resultado:not(:empty) {
+  margin-top: 2rem;
 }
 
-#resultado[data-estado="valido"] {
-  border-color: var(--valido);
+.carimbo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem 0.4rem 0.7rem;
+  /* A folga na largura deixa os cantos do carimbo inclinado dentro da tela. */
+  max-width: calc(100% - 0.75rem);
+  border: 2.5px solid currentColor;
+  border-radius: 0.4rem;
+  font-size: clamp(1.125rem, 5vw, 1.375rem);
+  font-weight: 750;
+  line-height: 1.25;
+  transform: rotate(-1.5deg);
 }
 
-#resultado[data-estado="invalido"] {
-  border-color: var(--invalido);
+.carimbo svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  flex: none;
 }
 
-#resultado[data-estado="valido"] strong {
+.carimbo[data-estado="valido"] {
   color: var(--valido);
+  background: var(--valido-fundo);
 }
 
-#resultado[data-estado="invalido"] strong {
+.carimbo[data-estado="invalido"],
+.carimbo[data-estado="erro"] {
   color: var(--invalido);
+  background: var(--invalido-fundo);
 }
 
-/* Fonte monoespaçada para os valores (documento formatado, tipo); quando é
-   inválido, o detalhe é uma frase e fica na fonte normal. */
-#resultado ul {
-  margin: 0.5rem 0 0;
-  padding-left: 1.25rem;
-  font-family: ui-monospace, monospace;
+/* O único movimento da página: o carimbo "batendo" quando o resultado chega. */
+@media (prefers-reduced-motion: no-preference) {
+  .carimbo {
+    animation: carimbar 180ms ease-out;
+  }
+
+  @keyframes carimbar {
+    from {
+      opacity: 0;
+      transform: scale(1.12) rotate(-4deg);
+    }
+  }
 }
 
-#resultado[data-estado="invalido"] ul {
-  font-family: inherit;
+.motivo {
+  max-width: 34em;
+  margin: 0.9rem 0 0;
+}
+
+.carregando {
+  margin: 0;
+  color: var(--suave);
+}
+
+/* Os dados do documento válido: rótulo à esquerda, valor à direita. */
+.dados {
+  display: grid;
+  align-items: baseline;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.4rem 1.25rem;
+  margin: 1rem 0 0;
+}
+
+.dados dt {
+  color: var(--suave);
+}
+
+.dados dd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* --- Trecho de código --- */
+
+.codigo {
+  margin: 2.5rem 0 3rem;
+}
+
+.codigo-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+pre {
+  margin: 0;
+  padding: 1rem;
+  overflow-x: auto;
+  border: 1px solid var(--linha);
+  border-radius: 0.5rem;
+  background: var(--superficie);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* No celular, letra um pouco menor para as chamadas caberem sem rolar. */
+@media (max-width: 30rem) {
+  pre {
+    font-size: 0.8125rem;
+  }
+}
+
+.comentario {
+  color: var(--suave);
+}
+
+.nota {
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+  color: var(--suave);
+}
+
+.nota code {
+  color: var(--tinta);
+  overflow-wrap: anywhere;
+}
+
+footer {
+  padding-bottom: 3rem;
+  font-size: 0.875rem;
+  color: var(--suave);
 }
 
 a {
-  color: var(--destaque);
+  color: var(--carimbo);
 }

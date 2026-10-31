@@ -19,14 +19,14 @@ describe "api/validar.rb" do
 
   it "valida e formata um CPF" do
     assert_equal({ "documento" => "cpf", "valido" => true, "formatado" => "123.456.789-09", "tipo" => nil,
-                   "detalhe" => nil }, subject)
+                   "detalhe" => nil, "caracteres" => 11 }, subject)
     assert_equal 200, response.status
   end
 
   it "devolve o tipo da chave Pix, sem formatado" do
     query.merge!("documento" => "pix", "valor" => "+5511987654321")
-    assert_equal({ "documento" => "pix", "valido" => true, "formatado" => nil, "tipo" => "phone", "detalhe" => nil },
-                 subject)
+    assert_equal({ "documento" => "pix", "valido" => true, "formatado" => nil, "tipo" => "phone", "detalhe" => nil,
+                   "caracteres" => nil }, subject)
   end
 
   it "devolve o tipo do boleto" do
@@ -37,7 +37,7 @@ describe "api/validar.rb" do
   it "valida os documentos novos, com o tipo do telefone e da placa" do
     query.merge!("documento" => "telefone", "valor" => "+55 11 98765-4321")
     assert_equal({ "documento" => "telefone", "valido" => true, "formatado" => "(11) 98765-4321",
-                   "tipo" => "celular", "detalhe" => "11" }, subject)
+                   "tipo" => "celular", "detalhe" => "11", "caracteres" => 13 }, subject)
   end
 
   it "devolve o detalhe do título, do processo e da chave de acesso" do
@@ -64,6 +64,12 @@ describe "api/validar.rb" do
     query.merge!("documento" => "placa", "valor" => "abc-1234")
     assert_equal "antiga", subject["tipo"]
     assert_equal "ABC-1234", subject["formatado"]
+  end
+
+  it "conta os caracteres sem a máscara, para a página explicar o erro de tamanho" do
+    query["valor"] = "123.456.789-0"
+    refute subject["valido"]
+    assert_equal 10, subject["caracteres"]
   end
 
   it "responde documento inválido com valido false" do

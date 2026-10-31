@@ -3,6 +3,28 @@
 As mudanças de cada versão ficam aqui. O projeto segue o
 [versionamento semântico](https://semver.org/lang/pt-BR/).
 
+## [0.3.0] - 2026-10-31
+
+### Novo
+
+- `require "br_validators/documentos"` carrega só os documentos, sem os validadores do
+  Rails. Serve para o app que já tem um `CpfValidator` (ou outro com o mesmo nome): o da
+  gem, no nível de cima, fazia o Rails ignorar o arquivo do app sem avisar. No Gemfile:
+  `gem "br_validators", require: "br_validators/documentos"`.
+- Assinaturas de tipo (RBS) em `sig/`, incluídas no pacote.
+- Link da documentação (rubydoc.info) nos dados da gem no RubyGems.
+
+### Mudado
+
+- `require "br_validators/consulta"` carrega só os documentos de que precisa, sem os
+  validadores do Rails.
+
+### Outros
+
+- Página de teste com visual novo: botões para escolher o documento, motivo quando o
+  número é inválido (tamanho ou regra) e o trecho de código Ruby equivalente. A API
+  devolve `caracteres`, o tamanho sem a máscara.
+
 ## [0.2.1] - 2026-10-26
 
 ### Corrigido

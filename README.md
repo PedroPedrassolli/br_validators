@@ -1,6 +1,18 @@
 # br_validators
 
-Gem Ruby para validar e formatar documentos brasileiros, sem dependências.
+[![Gem](https://img.shields.io/gem/v/br_validators)](https://rubygems.org/gems/br_validators)
+[![CI](https://github.com/PedroPedrassolli/br_validators/actions/workflows/ci.yml/badge.svg)](https://github.com/PedroPedrassolli/br_validators/actions/workflows/ci.yml)
+
+Gem Ruby para validar e formatar documentos brasileiros, sem dependências. Dá para
+testar cada documento no navegador em https://br-validators.vercel.app.
+
+```ruby
+require "br_validators"
+
+BrValidators::CPF.valid?("123.456.789-09")     # => true
+BrValidators::CNPJ.format("12abc34501de35")     # => "12.ABC.345/01DE-35"
+BrValidators::Telefone.type("(11) 98765-4321")  # => :celular
+```
 
 ## Instalação
 
@@ -148,23 +160,47 @@ sobrescreva as chaves `errors.messages.<documento>_invalid` (`cpf_invalid`, `cep
 Os validadores ficam no nível de cima (`CpfValidator`, `TelefoneValidator`,
 `TituloEleitorValidator`...), porque é assim que o Rails encontra `cpf: true`.
 
+Se o seu app já tem um validador com o mesmo nome (um `app/validators/cpf_validator.rb`,
+por exemplo), o Rails passa a ignorar o arquivo do app sem avisar, porque a classe já
+existe. Para ficar com o seu, carregue só os documentos:
+
+```ruby
+# Gemfile
+gem "br_validators", require: "br_validators/documentos"
+```
+
+Os módulos (`BrValidators::CPF`...) continuam disponíveis; só os validadores do Rails
+ficam de fora.
+
 Já existem boas gems para CPF e CNPJ. A ideia aqui é juntar num lugar só os documentos
 que costumam aparecer em sistemas brasileiros (inclusive CNS, Pix, boleto, placa, NF-e e
 processo judicial), com mensagens de erro em português e inglês.
 
+## Tipos (RBS)
+
+A gem vem com assinaturas de tipo em `sig/`, para quem usa Steep, o Ruby LSP ou outra
+ferramenta que lê RBS. A documentação de cada módulo fica em
+[rubydoc.info](https://rubydoc.info/gems/br_validators).
+
 ## Página de teste
 
-Dá para testar cada validador no navegador em https://br-validators.vercel.app. A página
-(`public/`) é HTML e JavaScript puro e chama uma função Ruby da Vercel
+Dá para testar cada validador no navegador em https://br-validators.vercel.app. O link
+pode abrir direto num documento: `?documento=placa`, `?documento=boleto`... A página
+mostra o resultado, explica por que um número é inválido e monta o trecho de código
+Ruby que faz o mesmo.
+
+A página (`public/`) é HTML e JavaScript puro e chama uma função Ruby da Vercel
 (`api/validar.rb`) que usa a própria gem, então as regras ficam num lugar só:
 
 ```
 GET /api/validar?documento=cnpj&valor=12.ABC.345/01DE-35
-{"documento":"cnpj","valido":true,"formatado":"12.ABC.345/01DE-35","tipo":null,"detalhe":null}
+{"documento":"cnpj","valido":true,"formatado":"12.ABC.345/01DE-35","tipo":null,"detalhe":null,"caracteres":14}
 
 GET /api/validar?documento=titulo_eleitor&valor=1023%208501%200671
-{"documento":"titulo_eleitor","valido":true,"formatado":"1023 8501 0671","tipo":null,"detalhe":"PR"}
+{"documento":"titulo_eleitor","valido":true,"formatado":"1023 8501 0671","tipo":null,"detalhe":"PR","caracteres":12}
 ```
+
+`caracteres` é o tamanho sem pontos, traços e espaços (para a chave Pix, `null`).
 
 ## Desenvolvimento
 
@@ -174,6 +210,7 @@ Precisa de Ruby 3.3 ou mais novo.
 bundle install
 bundle exec rake test   # testes (a cobertura mínima é 100% das linhas)
 bundle exec rubocop     # estilo
+bundle exec rbs -r uri -I sig validate   # assinaturas de tipo
 node --test "test/js/*.test.mjs"   # testes da página de teste
 ```
 
