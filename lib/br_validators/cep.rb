@@ -24,16 +24,21 @@ module BrValidators
     # 8 dígitos. "00000-000" é o CEP que sistemas usam como "não informado";
     # nenhuma região dos Correios começa com 00000.
     def self.valid?(value)
-      cep = strip(value)
-      cep.match?(/\A\d{8}\z/) && cep != "00000000"
+      valid_stripped?(strip(value))
     end
 
     # Devolve "01001-000", ou nil se o CEP for inválido.
     def self.format(value)
-      return nil unless valid?(value)
-
       cep = strip(value)
+      return nil unless valid_stripped?(cep)
+
       "#{cep[0, 5]}-#{cep[5, 3]}"
     end
+
+    def self.valid_stripped?(cep)
+      cep.match?(/\A\d{8}\z/) && cep != "00000000"
+    end
+
+    private_class_method :valid_stripped?
   end
 end

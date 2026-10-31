@@ -2,6 +2,7 @@
 
 require_relative "version"
 require_relative "texto"
+require_relative "digitos"
 require_relative "cpf"
 require_relative "cnpj"
 require_relative "cns"
@@ -26,6 +27,10 @@ require_relative "chave_acesso"
 # precisa estar exatamente como o Banco Central guarda.
 # Alguns têm métodos a mais: type (Pix, Boleto, Telefone, Placa), uf (TituloEleitor),
 # segmento (ProcessoCNJ), modelo (ChaveAcesso), ddd (Telefone), mercosul e antiga (Placa).
+#
+# Dentro de cada módulo, os métodos públicos tiram a máscara uma vez só e passam
+# o texto limpo para um método privado com a regra (valid_stripped? ou
+# type_stripped). Assim format, uf, modelo... não refazem o mesmo trabalho.
 #
 # Este arquivo carrega só os documentos, sem os validadores do Rails. Serve para o
 # app que já tem um CpfValidator (ou outro com o mesmo nome) e quer continuar com o

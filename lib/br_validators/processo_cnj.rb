@@ -38,7 +38,26 @@ module BrValidators
     end
 
     def self.valid?(value)
+      valid_stripped?(strip(value))
+    end
+
+    # Devolve "0000123-45.2024.8.26.0100", ou nil se o número for inválido.
+    def self.format(value)
       numero = strip(value)
+      return nil unless valid_stripped?(numero)
+
+      "#{numero[0, 7]}-#{numero[7, 2]}.#{numero[9, 4]}.#{numero[13]}.#{numero[14, 2]}.#{numero[16, 4]}"
+    end
+
+    # O nome do segmento do Judiciário ("Justiça do Trabalho"), ou nil se o número
+    # for inválido.
+    def self.segmento(value)
+      numero = strip(value)
+      valid_stripped?(numero) ? SEGMENTOS[numero[13]] : nil
+    end
+
+    # A regra, com o número já sem máscara.
+    def self.valid_stripped?(numero)
       return false unless numero.match?(/\A\d{20}\z/)
       return false unless SEGMENTOS.key?(numero[13])
 
@@ -46,18 +65,6 @@ module BrValidators
       (numero[0, 7] + numero[9, 11] + numero[7, 2]).to_i % 97 == 1
     end
 
-    # Devolve "0000123-45.2024.8.26.0100", ou nil se o número for inválido.
-    def self.format(value)
-      return nil unless valid?(value)
-
-      numero = strip(value)
-      "#{numero[0, 7]}-#{numero[7, 2]}.#{numero[9, 4]}.#{numero[13]}.#{numero[14, 2]}.#{numero[16, 4]}"
-    end
-
-    # O nome do segmento do Judiciário ("Justiça do Trabalho"), ou nil se o número
-    # for inválido.
-    def self.segmento(value)
-      valid?(value) ? SEGMENTOS[strip(value)[13]] : nil
-    end
+    private_class_method :valid_stripped?
   end
 end

@@ -36,32 +36,39 @@ module BrValidators
     end
 
     def self.valid?(value)
-      titulo = strip(value)
-      return false unless titulo.match?(/\A\d{12}\z/)
-
-      uf = titulo[8, 2]
-      return false unless UFS.key?(uf)
-
-      first = check_digit(weighted_sum(titulo[0, 8], 2..9), uf)
-      second = check_digit(weighted_sum("#{uf}#{first}", 7..9), uf)
-      titulo[10, 2] == "#{first}#{second}"
+      valid_stripped?(strip(value))
     end
 
     # Devolve "1023 8501 0671", ou nil se o título for inválido.
     def self.format(value)
-      return nil unless valid?(value)
-
       titulo = strip(value)
+      return nil unless valid_stripped?(titulo)
+
       "#{titulo[0, 4]} #{titulo[4, 4]} #{titulo[8, 4]}"
     end
 
     # A sigla da UF onde o título foi emitido ("SP", "ZZ" para o exterior), ou nil.
     def self.uf(value)
-      valid?(value) ? UFS[strip(value)[8, 2]] : nil
+      titulo = strip(value)
+      valid_stripped?(titulo) ? UFS[titulo[8, 2]] : nil
     end
 
-    def self.weighted_sum(digits, weights)
-      digits.chars.zip(weights.to_a).sum { |digit, weight| digit.to_i * weight }
+    # A regra, com o título já sem máscara.
+    def self.valid_stripped?(titulo)
+      return false unless titulo.match?(/\A\d{12}\z/)
+
+      uf = titulo[8, 2]
+      return false unless UFS.key?(uf)
+
+      first = check_digit(weighted_sum(titulo[0, 8], 2), uf)
+      second = check_digit(weighted_sum("#{uf}#{first}", 7), uf)
+      titulo[10, 2] == "#{first}#{second}"
+    end
+
+    # Pesos crescentes da esquerda para a direita, a partir de first_weight (2 no
+    # primeiro dígito, 7 no segundo). getbyte - 48 é o valor do dígito (digitos.rb).
+    def self.weighted_sum(digits, first_weight)
+      (0...digits.size).sum { |index| (digits.getbyte(index) - 48) * (first_weight + index) }
     end
 
     # codigo_uf: "01" (SP) e "02" (MG) têm a regra especial do resto 0.
@@ -72,6 +79,6 @@ module BrValidators
       rest == 10 ? 0 : rest
     end
 
-    private_class_method :weighted_sum, :check_digit
+    private_class_method :valid_stripped?, :weighted_sum, :check_digit
   end
 end

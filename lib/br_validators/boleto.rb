@@ -30,11 +30,7 @@ module BrValidators
 
     # :cobranca, :arrecadacao ou nil se a linha for inválida.
     def self.type(value)
-      line = strip(value)
-      return :cobranca if line.match?(/\A\d{47}\z/) && valid_cobranca?(line)
-      return :arrecadacao if line.match?(/\A8\d{47}\z/) && valid_arrecadacao?(line)
-
-      nil
+      type_stripped(strip(value))
     end
 
     def self.valid?(value)
@@ -46,10 +42,17 @@ module BrValidators
     #   arrecadação: "82670000001-9 00000000000-0 00000000000-0 00000000000-0"
     def self.format(value)
       line = strip(value)
-      case type(line)
+      case type_stripped(line)
       when :cobranca then format_cobranca(line)
       when :arrecadacao then line.scan(/\d{12}/).map { |block| "#{block[0, 11]}-#{block[11]}" }.join(" ")
       end
+    end
+
+    # A regra, com a linha já sem máscara.
+    def self.type_stripped(line)
+      return :cobranca if line.match?(/\A\d{47}\z/) && valid_cobranca?(line)
+
+      :arrecadacao if line.match?(/\A8\d{47}\z/) && valid_arrecadacao?(line)
     end
 
     def self.format_cobranca(line)
@@ -102,33 +105,30 @@ module BrValidators
 
     # Pesos 2, 1, 2, 1... da direita para a esquerda; produtos com dois algarismos
     # entram somados (12 vira 1 + 2). O dígito é o que falta para a próxima dezena.
+    # getbyte - 48 é o valor do dígito (explicado em digitos.rb).
     def self.mod10(digits)
-      sum = digits.reverse.chars.each_with_index.sum do |digit, index|
-        product = digit.to_i * (index.even? ? 2 : 1)
+      last = digits.size - 1
+      sum = (0..last).sum do |index|
+        product = (digits.getbyte(last - index) - 48) * (index.even? ? 2 : 1)
         (product / 10) + (product % 10)
       end
       (10 - (sum % 10)) % 10
     end
 
-    # Pesos 2 a 9, da direita para a esquerda, voltando ao 2 depois do 9.
-    def self.mod11_sum(digits)
-      digits.reverse.chars.each_with_index.sum { |digit, index| digit.to_i * ((index % 8) + 2) }
-    end
-
-    # Na cobrança, quando a conta dá 0, 10 ou 11, o dígito vira 1 (nunca é 0).
+    # Na cobrança, a soma é a do módulo 11 com pesos de 2 a 9 (Digitos, em
+    # digitos.rb), mas quando a conta dá 0, 10 ou 11 o dígito vira 1 (nunca é 0).
     def self.mod11_cobranca(digits)
-      digit = 11 - (mod11_sum(digits) % 11)
+      digit = 11 - (Digitos.soma_pesos_2_a_9(digits) % 11)
       [0, 10, 11].include?(digit) ? 1 : digit
     end
 
-    # Na arrecadação, resto 0 ou 1 vira dígito 0.
+    # Na arrecadação, é o módulo 11 comum: resto 0 ou 1 vira dígito 0.
     def self.mod11_arrecadacao(digits)
-      rest = mod11_sum(digits) % 11
-      rest < 2 ? 0 : 11 - rest
+      Digitos.modulo11(digits)
     end
 
-    private_class_method :format_cobranca, :valid_cobranca?, :cobranca_barcode, :valid_arrecadacao?,
-                         :arrecadacao_check, :check_digit_ok?, :without, :mod10, :mod11_sum,
+    private_class_method :type_stripped, :format_cobranca, :valid_cobranca?, :cobranca_barcode,
+                         :valid_arrecadacao?, :arrecadacao_check, :check_digit_ok?, :without, :mod10,
                          :mod11_cobranca, :mod11_arrecadacao
   end
 end

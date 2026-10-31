@@ -28,11 +28,7 @@ module BrValidators
 
     # :antiga, :mercosul ou nil se a placa for inválida.
     def self.type(value)
-      placa = strip(value)
-      return :antiga if placa.match?(ANTIGA)
-      return :mercosul if placa.match?(MERCOSUL)
-
-      nil
+      type_stripped(strip(value))
     end
 
     def self.valid?(value)
@@ -42,7 +38,7 @@ module BrValidators
     # Devolve "ABC-1234" (antiga) ou "ABC1D23" (Mercosul), ou nil se for inválida.
     def self.format(value)
       placa = strip(value)
-      case type(placa)
+      case type_stripped(placa)
       when :antiga then "#{placa[0, 3]}-#{placa[3, 4]}"
       when :mercosul then placa
       end
@@ -52,7 +48,7 @@ module BrValidators
     #   mercosul("ABC-1234") # => "ABC1C34"
     def self.mercosul(value)
       placa = strip(value)
-      case type(placa)
+      case type_stripped(placa)
       when :antiga then placa[0, 4] + ("A".ord + placa[4].to_i).chr + placa[5, 2]
       when :mercosul then placa
       end
@@ -64,10 +60,21 @@ module BrValidators
     #   antiga("ABC1C34") # => "ABC1234"
     def self.antiga(value)
       placa = strip(value)
-      return placa if type(placa) == :antiga
-      return nil unless type(placa) == :mercosul && placa[4].between?("A", "J")
-
-      placa[0, 4] + (placa[4].ord - "A".ord).to_s + placa[5, 2]
+      case type_stripped(placa)
+      when :antiga then placa
+      when :mercosul
+        # Só as letras de A a J na quinta posição vieram da conversão.
+        placa[0, 4] + (placa[4].ord - "A".ord).to_s + placa[5, 2] if placa[4].between?("A", "J")
+      end
     end
+
+    # A regra, com a placa já sem máscara e em maiúsculas.
+    def self.type_stripped(placa)
+      return :antiga if placa.match?(ANTIGA)
+
+      :mercosul if placa.match?(MERCOSUL)
+    end
+
+    private_class_method :type_stripped
   end
 end

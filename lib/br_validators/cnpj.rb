@@ -33,7 +33,19 @@ module BrValidators
     end
 
     def self.valid?(value)
+      valid_stripped?(strip(value))
+    end
+
+    # Devolve "12.ABC.345/01DE-35", ou nil se o CNPJ for inválido.
+    def self.format(value)
       cnpj = strip(value)
+      return nil unless valid_stripped?(cnpj)
+
+      "#{cnpj[0, 2]}.#{cnpj[2, 3]}.#{cnpj[5, 3]}/#{cnpj[8, 4]}-#{cnpj[12, 2]}"
+    end
+
+    # A regra, com o CNPJ já sem máscara e em maiúsculas.
+    def self.valid_stripped?(cnpj)
       return false unless cnpj.match?(PATTERN)
 
       # 00.000.000/0000-00 e parecidos passam na conta, mas não existem.
@@ -42,29 +54,14 @@ module BrValidators
       cnpj[12, 2] == check_digits(cnpj[0, 12])
     end
 
-    # Devolve "12.ABC.345/01DE-35", ou nil se o CNPJ for inválido.
-    def self.format(value)
-      return nil unless valid?(value)
-
-      cnpj = strip(value)
-      "#{cnpj[0, 2]}.#{cnpj[2, 3]}.#{cnpj[5, 3]}/#{cnpj[8, 4]}-#{cnpj[12, 2]}"
-    end
-
+    # Cada dígito é o módulo 11 com pesos de 2 a 9 (Digitos, em digitos.rb) dos
+    # caracteres anteriores; o segundo conta também o primeiro.
     def self.check_digits(base)
-      first = check_digit(base)
-      second = check_digit("#{base}#{first}")
+      first = Digitos.modulo11(base)
+      second = Digitos.modulo11("#{base}#{first}")
       "#{first}#{second}"
     end
 
-    def self.check_digit(chars)
-      # Pesos 2, 3, ..., 9, 2, 3... a partir do último caractere.
-      sum = chars.reverse.chars.each_with_index.sum do |char, index|
-        (char.ord - 48) * ((index % 8) + 2)
-      end
-      rest = sum % 11
-      (rest < 2 ? 0 : 11 - rest).to_s
-    end
-
-    private_class_method :check_digits, :check_digit
+    private_class_method :valid_stripped?, :check_digits
   end
 end

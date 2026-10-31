@@ -48,31 +48,32 @@ module BrValidators
     end
 
     def self.valid?(value)
-      chave = strip(value)
-      return false unless chave.match?(PATTERN)
-      return false unless UFS_IBGE.include?(chave[0, 2]) && chave[4, 2].between?("01", "12")
-
-      chave[43] == check_digit(chave[0, 43])
+      valid_stripped?(strip(value))
     end
 
     # Devolve a chave em 11 grupos de 4 ("3526 1011 2223 ..."), ou nil se for inválida.
     def self.format(value)
-      return nil unless valid?(value)
+      chave = strip(value)
+      return nil unless valid_stripped?(chave)
 
-      strip(value).scan(/.{4}/).join(" ")
+      chave.scan(/.{4}/).join(" ")
     end
 
     # O código do modelo ("55" para NF-e, "65" para NFC-e...), ou nil se for inválida.
     def self.modelo(value)
-      valid?(value) ? strip(value)[20, 2] : nil
+      chave = strip(value)
+      valid_stripped?(chave) ? chave[20, 2] : nil
     end
 
-    def self.check_digit(chars)
-      sum = chars.reverse.chars.each_with_index.sum { |char, index| (char.ord - 48) * ((index % 8) + 2) }
-      rest = sum % 11
-      (rest < 2 ? 0 : 11 - rest).to_s
+    # A regra, com a chave já sem máscara. O dígito é o módulo 11 com pesos de 2 a 9
+    # (Digitos, em digitos.rb), com as letras do CNPJ valendo ASCII menos 48.
+    def self.valid_stripped?(chave)
+      return false unless chave.match?(PATTERN)
+      return false unless UFS_IBGE.include?(chave[0, 2]) && chave[4, 2].between?("01", "12")
+
+      chave[43] == Digitos.modulo11(chave[0, 43]).to_s
     end
 
-    private_class_method :check_digit
+    private_class_method :valid_stripped?
   end
 end

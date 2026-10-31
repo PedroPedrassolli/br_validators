@@ -28,7 +28,20 @@ module BrValidators
     end
 
     def self.valid?(value)
+      valid_stripped?(strip(value))
+    end
+
+    # Devolve o CNS em grupos de 3, 4, 4 e 4 dígitos, como aparece impresso no
+    # cartão ("123 4567 8901 0000"), ou nil se for inválido.
+    def self.format(value)
       cns = strip(value)
+      return nil unless valid_stripped?(cns)
+
+      "#{cns[0, 3]} #{cns[3, 4]} #{cns[7, 4]} #{cns[11, 4]}"
+    end
+
+    # A regra, com o CNS já sem máscara.
+    def self.valid_stripped?(cns)
       return false unless cns.match?(/\A\d{15}\z/)
 
       case cns[0]
@@ -36,15 +49,6 @@ module BrValidators
       when "7", "8", "9" then (weighted_sum(cns) % 11).zero?
       else false
       end
-    end
-
-    # Devolve o CNS em grupos de 3, 4, 4 e 4 dígitos, como aparece impresso no
-    # cartão ("123 4567 8901 0000"), ou nil se for inválido.
-    def self.format(value)
-      return nil unless valid?(value)
-
-      cns = strip(value)
-      "#{cns[0, 3]} #{cns[3, 4]} #{cns[7, 4]} #{cns[11, 4]}"
     end
 
     # Monta o CNS esperado para um PIS, como na rotina do Ministério da Saúde.
@@ -59,11 +63,12 @@ module BrValidators
       "#{pis}001#{digit}"
     end
 
-    # Pesos começando em 15 e diminuindo de 1 em 1 a cada dígito.
+    # Pesos começando em 15 e diminuindo de 1 em 1 a cada dígito. getbyte - 48 é o
+    # valor do dígito (explicado em digitos.rb).
     def self.weighted_sum(digits)
-      digits.chars.each_with_index.sum { |digit, index| digit.to_i * (15 - index) }
+      (0...digits.size).sum { |index| (digits.getbyte(index) - 48) * (15 - index) }
     end
 
-    private_class_method :from_pis, :weighted_sum
+    private_class_method :valid_stripped?, :from_pis, :weighted_sum
   end
 end

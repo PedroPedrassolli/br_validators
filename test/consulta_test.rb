@@ -83,6 +83,13 @@ describe BrValidators::Consulta do
       assert_nil subject.banco(nil)
       assert_empty falso.pedidos
     end
+
+    it "aceita o código em outro encoding, como UTF-16, sem levantar erro" do
+      falso = responder(200, '{"code":341}')
+      assert_equal 341, subject.banco("341".encode("UTF-16LE"))["code"]
+      assert_nil subject.banco("x".encode("UTF-16LE"))
+      assert_equal ["https://brasilapi.com.br/api/banks/v1/341"], falso.pedidos
+    end
   end
 
   describe ".ddd" do
@@ -91,6 +98,13 @@ describe BrValidators::Consulta do
       assert_equal "SP", subject.ddd("11")["state"]
       assert_nil subject.ddd("20")
       assert_equal ["https://brasilapi.com.br/api/ddd/v1/11"], falso.pedidos
+    end
+
+    it "aceita o DDD como número ou em outro encoding" do
+      falso = responder(200, '{"state":"RJ"}')
+      subject.ddd(21)
+      subject.ddd("21".encode("UTF-16LE"))
+      assert_equal ["https://brasilapi.com.br/api/ddd/v1/21"] * 2, falso.pedidos
     end
   end
 

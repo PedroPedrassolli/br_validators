@@ -61,7 +61,8 @@ module BrValidators
 
     # Banco pelo código de compensação ("001", "237", 341): code, name, fullName e ispb.
     def self.banco(codigo)
-      codigo = codigo.to_s.strip
+      # BrValidators.texto: aceita número e texto em qualquer encoding (UTF-16 dava erro).
+      codigo = BrValidators.texto(codigo).strip
       return nil unless codigo.match?(/\A\d{1,3}\z/)
 
       buscar("/banks/v1/#{codigo.to_i}")
@@ -69,7 +70,7 @@ module BrValidators
 
     # UF e cidades de um DDD: state e cities.
     def self.ddd(valor)
-      ddd = valor.to_s.strip
+      ddd = BrValidators.texto(valor).strip
       return nil unless Telefone::DDDS.include?(ddd)
 
       buscar("/ddd/v1/#{ddd}")
