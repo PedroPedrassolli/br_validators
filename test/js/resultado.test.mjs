@@ -3,7 +3,15 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 
-import { DOCUMENTOS, descrever, motivo, textoRuby, trechoRuby, urlDaValidacao } from "../../public/resultado.mjs";
+import {
+  DOCUMENTOS,
+  descrever,
+  motivo,
+  realce,
+  textoRuby,
+  trechoRuby,
+  urlDaValidacao,
+} from "../../public/resultado.mjs";
 
 describe("urlDaValidacao", () => {
   it("monta a URL da API com os parâmetros codificados", () => {
@@ -167,5 +175,47 @@ describe("DOCUMENTOS", () => {
     const html = readFileSync(new URL("../../public/index.html", import.meta.url), "utf8");
     const botoes = [...html.matchAll(/name="documento" value="(\w+)"/g)].map((achado) => achado[1]);
     assert.deepEqual(botoes, Object.keys(DOCUMENTOS));
+  });
+});
+
+describe("realce", () => {
+  it("separa constantes, textos e o resultado de cada chamada", () => {
+    assert.deepEqual(realce('cpf = "529.982.247-25"'), [
+      ["", "cpf = "],
+      ["string", '"529.982.247-25"'],
+    ]);
+    assert.deepEqual(realce("BrValidators::CPF.valid?(cpf)"), [
+      ["constante", "BrValidators::CPF"],
+      ["", ".valid?(cpf)"],
+    ]);
+    assert.deepEqual(realce("# => :mercosul"), [
+      ["comentario", "# => "],
+      ["literal", ":mercosul"],
+    ]);
+    assert.deepEqual(realce("# => nil"), [
+      ["comentario", "# => "],
+      ["literal", "nil"],
+    ]);
+  });
+
+  it("não perde nenhum caractere, nem com aspas e #{ no valor", () => {
+    const resposta = { valido: false, formatado: null, tipo: null, detalhe: null };
+    for (const documento of Object.keys(DOCUMENTOS)) {
+      for (const linha of trechoRuby(documento, 'a"b#{c}\\d', resposta)) {
+        assert.equal(
+          realce(linha)
+            .map(([, texto]) => texto)
+            .join(""),
+          linha,
+        );
+      }
+    }
+  });
+
+  it("deixa o valor digitado inteiro como texto, sem colorir o que tem dentro", () => {
+    assert.deepEqual(realce('pix = "Fulano :x nil \\"oi\\""'), [
+      ["", "pix = "],
+      ["string", '"Fulano :x nil \\"oi\\""'],
+    ]);
   });
 });

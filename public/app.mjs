@@ -1,6 +1,6 @@
 // Liga a página à API. As regras ficam todas na gem (em Ruby); aqui só se monta
 // a pergunta e se mostra a resposta.
-import { DOCUMENTOS, descrever, trechoRuby, urlDaValidacao } from "./resultado.mjs";
+import { DOCUMENTOS, descrever, realce, trechoRuby, urlDaValidacao } from "./resultado.mjs";
 
 const formulario = document.querySelector("#formulario");
 const valor = document.querySelector("#valor");
@@ -11,11 +11,13 @@ const exemplo = document.querySelector("#exemplo");
 const resultado = document.querySelector("#resultado");
 const trecho = document.querySelector("#trecho");
 const rails = document.querySelector("#rails");
+const botaoTema = document.querySelector("#tema");
+const corDaBarra = document.querySelector('meta[name="theme-color"]');
 
 // A função Ruby responde em menos de 1 segundo; depois disso, algo deu errado.
 const ESPERA_MAXIMA_MS = 10_000;
 
-// Desenhos dos ícones do carimbo (traços de um quadro de 24 x 24).
+// Desenhos dos ícones do resultado (traços de um quadro de 24 x 24).
 const ICONES = {
   valido: "M5 12.5l4.5 4.5L19 7.5",
   invalido: "M6.5 6.5l11 11M17.5 6.5l-11 11",
@@ -62,10 +64,10 @@ function botaoCopiar(texto) {
 // Mostra o resultado. Sempre com textContent (e não innerHTML), para nunca
 // interpretar o que a pessoa digitou.
 function mostrar({ estado, titulo, dados, motivo }) {
-  const carimbo = criar("p", null, "carimbo");
-  carimbo.dataset.estado = estado;
-  carimbo.append(icone(estado), criar("strong", titulo));
-  const partes = [carimbo];
+  const veredito = criar("p", null, "veredito");
+  veredito.dataset.estado = estado;
+  veredito.append(icone(estado), criar("strong", titulo));
+  const partes = [veredito];
 
   if (motivo) partes.push(criar("p", motivo, "motivo"));
 
@@ -93,9 +95,9 @@ function mostrar({ estado, titulo, dados, motivo }) {
 function atualizarTrecho(resposta = null) {
   const documento = documentoAtual();
   const texto = valor.value.trim() || DOCUMENTOS[documento].exemplo;
-  // As linhas de resultado ("# => ...") ficam na cor dos comentários.
+  // Cada pedaço com cor vira um <span> com a classe do tipo (ver realce).
   const partes = trechoRuby(documento, texto, resposta).flatMap((linha) => [
-    linha.startsWith("#") ? criar("span", linha, "comentario") : linha,
+    ...realce(linha).map(([tipo, pedaco]) => (tipo ? criar("span", pedaco, tipo) : pedaco)),
     "\n",
   ]);
   trecho.replaceChildren(...partes);
@@ -173,16 +175,51 @@ document.addEventListener("click", async (evento) => {
   try {
     await navigator.clipboard.writeText(botao.dataset.texto ?? alvo.textContent);
     botao.textContent = "Copiado";
+    botao.dataset.estado = "copiado";
   } catch {
     if (alvo) getSelection().selectAllChildren(alvo);
     botao.textContent = alvo ? "Selecionado" : "Não deu para copiar";
   }
   // Um clique novo antes de voltar ao normal recomeça a contagem.
   clearTimeout(Number(botao.dataset.espera));
-  botao.dataset.espera = setTimeout(() => (botao.textContent = "Copiar"), 1500);
+  botao.dataset.espera = setTimeout(() => {
+    botao.textContent = "Copiar";
+    delete botao.dataset.estado;
+  }, 1500);
+});
+
+// Tema claro ou escuro, como no portfólio: escuro por padrão, e a escolha fica
+// guardada no navegador (o tema.js aplica antes de a página aparecer).
+function mostrarTema() {
+  const claro = document.documentElement.dataset.tema === "claro";
+  const rotuloTema = claro ? "Mudar para o tema escuro" : "Mudar para o tema claro";
+  botaoTema.setAttribute("aria-label", rotuloTema);
+  botaoTema.title = rotuloTema;
+  corDaBarra.content = claro ? "#fafafc" : "#09090f";
+}
+
+botaoTema.addEventListener("click", () => {
+  const claro = document.documentElement.dataset.tema !== "claro";
+  if (claro) document.documentElement.dataset.tema = "claro";
+  else delete document.documentElement.dataset.tema;
+  try {
+    localStorage.setItem("tema", claro ? "claro" : "escuro");
+  } catch {
+    // Navegação privada pode bloquear o localStorage: o tema vale só até fechar.
+  }
+  mostrarTema();
+});
+
+// Brilho que segue o mouse no cartão, como nos cartões do portfólio. A posição
+// vai para as variáveis --x e --y; o desenho do brilho fica no CSS.
+formulario.addEventListener("pointermove", (evento) => {
+  const caixa = formulario.getBoundingClientRect();
+  formulario.style.setProperty("--x", `${evento.clientX - caixa.left}px`);
+  formulario.style.setProperty("--y", `${evento.clientY - caixa.top}px`);
 });
 
 // Abre no documento do link (?documento=placa), se houver um.
 const doLink = new URLSearchParams(location.search).get("documento");
 if (Object.hasOwn(DOCUMENTOS, doLink ?? "")) formulario.elements.documento.value = doLink;
+mostrarTema();
 ajustarCampo();

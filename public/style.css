@@ -1,430 +1,842 @@
-/* A página imita um documento brasileiro: papel verde-acinzentado, a trama de
-   linhas finas dos papéis de segurança no topo, texto datilografado (Courier
-   Prime) e o resultado como um carimbo de cartório.
+/*
+  Visual do portfólio (pedrassolli.vercel.app): mesmas cores, fontes, fundo e
+  componentes, tirados de frontend/src/styles/tokens.css e dos *.module.css de lá
+  (repositório PedroPedrassolli/portfolio). Mudou o portfólio? Comece por estes tokens.
 
-   Cores em variáveis para trocar tudo no tema escuro. Contrastes conferidos
-   (WCAG): texto pelo menos 13:1, texto suave 5,7:1, bordas de campo 3,2:1. */
+  Tema escuro por padrão. O claro entra com data-tema="claro" no <html> (tema.js e
+  app.mjs). A janela de código fica escura nos dois temas, como no portfólio.
+*/
 
+/* Geist e Geist Mono (licença OFL, em /fontes): variáveis, um arquivo por família. */
 @font-face {
-  font-family: "Courier Prime";
-  src: url("/fontes/courier-prime-regular.woff") format("woff");
-  font-weight: 400;
+  font-family: "Geist";
+  src: url("/fontes/geist.woff") format("woff");
+  font-weight: 100 900;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Courier Prime";
-  src: url("/fontes/courier-prime-bold.woff") format("woff");
-  font-weight: 700;
+  font-family: "Geist Mono";
+  src: url("/fontes/geist-mono.woff") format("woff");
+  font-weight: 100 900;
   font-display: swap;
 }
 
 :root {
-  --papel: #eef1e8;
-  --ficha: #fbfbf6;
-  --campo: #f0f2ea;
-  --codigo: #e5e9e0;
-  --tinta: #18231c;
-  --suave: #4f5c54;
-  --linha: #7d8a82;
-  --carimbo: #3a3fa8;
-  --sobre-carimbo: #ffffff;
-  --valido: #1c6b3d;
-  --invalido: #a42a20;
-  --trama: 0.5;
-  --sombra: rgb(24 35 28 / 0.28);
-  --datilografia: "Courier Prime", ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
-  color-scheme: light dark;
+  --fonte: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fonte-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --largura: 70rem;
+  --margem: clamp(1rem, 4vw, 2rem);
+  --altura-topo: 4.25rem;
+  --raio: 14px;
+  --raio-grande: 22px;
+
+  --fundo: #09090f;
+  --fundo-elevado: #101019;
+  --superficie: rgba(255, 255, 255, 0.03);
+  --superficie-hover: rgba(255, 255, 255, 0.055);
+  --borda: rgba(255, 255, 255, 0.08);
+  --borda-forte: rgba(255, 255, 255, 0.16);
+  /* Borda do campo de texto: o portfólio não tem campos. Esta tem contraste 3:1 com o fundo. */
+  --borda-campo: #6b6b80;
+  --texto: #ededf3;
+  --apagado: #a3a3b8;
+  --sutil: #7d7d94;
+  --destaque: #b9a1ff;
+  --destaque-forte: #8b5cf6;
+  --rubi: #ff6b96;
+  --sucesso: #4ade80;
+
+  --degrade-marca: linear-gradient(120deg, #b9a1ff 0%, #ff8fb1 100%);
+  --degrade-texto: linear-gradient(180deg, #ffffff 0%, #b8b8cc 100%);
+  --brilho-1: rgba(139, 92, 246, 0.22);
+  --brilho-2: rgba(255, 107, 150, 0.12);
+  --aurora-1: #8b5cf6;
+  --aurora-2: #ff6b96;
+  --aurora-opacidade: 0.22;
+  --linha-grade: rgba(255, 255, 255, 0.045);
+
+  --botao-fundo: #ededf3;
+  --botao-texto: #09090f;
+  --botao-hover: #ffffff;
+  --sombra-cartao: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 20px 40px -24px rgba(0, 0, 0, 0.6);
+
+  /* Janela de código (tema Dracula) */
+  --codigo-fundo: #0d0d16;
+  --codigo-texto: #e6e6f0;
+  --codigo-palavra: #ff79c6;
+  --codigo-constante: #8be9fd;
+  --codigo-string: #f1fa8c;
+  --codigo-literal: #bd93f9;
+  --codigo-comentario: #7c7c99;
+  --codigo-borda: rgba(255, 255, 255, 0.06);
+
+  color-scheme: dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --papel: #111612;
-    --ficha: #19211b;
-    --campo: #131a15;
-    --codigo: #0c110e;
-    --tinta: #e3eae4;
-    --suave: #a3b0a8;
-    --linha: #6c7b73;
-    --carimbo: #aeb4ff;
-    --sobre-carimbo: #111612;
-    --valido: #86d7a2;
-    --invalido: #f29c92;
-    --trama: 0.22;
-    --sombra: rgb(0 0 0 / 0.55);
-  }
+:root[data-tema="claro"] {
+  --fundo: #fafafc;
+  --fundo-elevado: #ffffff;
+  --superficie: rgba(10, 10, 30, 0.025);
+  --superficie-hover: rgba(10, 10, 30, 0.05);
+  --borda: rgba(10, 10, 30, 0.09);
+  --borda-forte: rgba(10, 10, 30, 0.18);
+  --borda-campo: #8a8a9e;
+  --texto: #0f0f1a;
+  --apagado: #4f4f63;
+  --sutil: #66667a;
+  --destaque: #6d28d9;
+  --destaque-forte: #6d28d9;
+  --rubi: #d6205b;
+  --sucesso: #166534;
+
+  --degrade-marca: linear-gradient(120deg, #6d28d9 0%, #d6205b 100%);
+  --degrade-texto: linear-gradient(180deg, #0f0f1a 0%, #45455a 100%);
+  --brilho-1: rgba(139, 92, 246, 0.16);
+  --brilho-2: rgba(255, 107, 150, 0.1);
+  --aurora-1: #a78bfa;
+  --aurora-2: #fb7aa5;
+  --aurora-opacidade: 0.18;
+  --linha-grade: rgba(10, 10, 30, 0.05);
+
+  --botao-fundo: #0f0f1a;
+  --botao-texto: #ffffff;
+  --botao-hover: #2a2a3d;
+  --sombra-cartao: 0 1px 2px rgba(10, 10, 30, 0.04), 0 16px 32px -24px rgba(10, 10, 30, 0.25);
+
+  color-scheme: light;
 }
 
-* {
+/* ---------- Base (frontend/src/styles/global.css do portfólio) ---------- */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
-  background: var(--papel);
-  color: var(--tinta);
-  font:
-    1rem/1.55 system-ui,
-    sans-serif;
+  min-height: 100vh;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--fonte);
+  font-size: 1rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Uma coluna central, com 16 px de margem no celular. */
-.coluna {
-  max-width: 46rem;
-  margin: 0 auto;
-  padding: 0 1rem;
+/* Fundo: grade fina que some em direção às bordas e um brilho roxo/rosa no topo.
+   Só gradientes, sem imagem: leve para o navegador. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60rem 30rem at 15% -10%, var(--brilho-1), transparent 70%),
+    radial-gradient(50rem 28rem at 95% 0%, var(--brilho-2), transparent 70%),
+    linear-gradient(var(--linha-grade) 1px, transparent 1px) 0 0 / 64px 64px,
+    linear-gradient(90deg, var(--linha-grade) 1px, transparent 1px) 0 0 / 64px 64px;
+  mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, #000 40%, transparent 100%);
 }
 
-code,
-pre {
-  font-family: var(--datilografia);
+h1,
+h2 {
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 a {
-  color: var(--carimbo);
+  color: var(--destaque);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* No meio de um texto, o link não pode depender só da cor. */
+p a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 
 :focus-visible {
-  outline: 3px solid var(--carimbo);
-  outline-offset: 2px;
+  outline: 2px solid var(--destaque);
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
-/* --- Topo: faixa com a trama, o nome da gem e a instalação --- */
+/* O <main> recebe foco pelo link "Pular para o conteúdo"; não precisa de contorno. */
+main:focus {
+  outline: none;
+}
 
-.topo {
+::selection {
+  background: var(--destaque-forte);
+  color: #ffffff;
+}
+
+/* Sem ligaduras: a Geist Mono desenharia o "=>" do "# => true" como uma seta. */
+code,
+pre {
+  font-family: var(--fonte-mono);
+  font-variant-ligatures: none;
+}
+
+.pular {
+  position: absolute;
+  top: -100px;
+  left: var(--margem);
+  z-index: 100;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--botao-fundo);
+  color: var(--botao-texto);
+  font-weight: 600;
+}
+
+.pular:focus {
+  top: 0.75rem;
+}
+
+/* ---------- Cabeçalho (Header.module.css) ---------- */
+
+.topo-dentro {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: var(--largura);
+  height: var(--altura-topo);
+  margin-inline: auto;
+  padding-inline: var(--margem);
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-right: auto;
+  color: var(--texto);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.marca:hover {
+  text-decoration: none;
+}
+
+.selo {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 8px;
+  background: var(--degrade-marca);
+  color: #09090f;
+  font-family: var(--fonte-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* Links em formato de pílula, como o menu do portfólio. */
+.links {
+  display: flex;
+  gap: 2px;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: var(--superficie);
+}
+
+.links a {
+  display: block;
+  padding: 0.375rem 0.875rem;
+  border-radius: 999px;
+  color: var(--apagado);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.links a:hover {
+  background: var(--superficie-hover);
+  color: var(--texto);
+  text-decoration: none;
+}
+
+/* Em tela estreita os links não cabem ao lado da marca; eles também estão no rodapé. */
+@media (max-width: 34rem) {
+  .topo nav {
+    display: none;
+  }
+}
+
+.botao-tema {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: var(--superficie);
+  color: var(--texto);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.botao-tema:hover {
+  border-color: var(--borda-forte);
+}
+
+.botao-tema:active {
+  transform: rotate(-20deg);
+}
+
+.botao-tema svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* No escuro o botão mostra o sol (vai para o claro); no claro, a lua. */
+.lua,
+:root[data-tema="claro"] .sol {
+  display: none;
+}
+
+:root[data-tema="claro"] .lua {
+  display: block;
+}
+
+/* ---------- Abertura (Hero.module.css) ---------- */
+
+/* Aurora: duas manchas de cor que se movem devagar atrás do topo. O main corta só
+   na horizontal (overflow-x: clip), para as manchas nunca criarem rolagem de lado. */
+main {
   position: relative;
-  padding: clamp(2.25rem, 7vw, 4.5rem) 0 5.5rem;
-  border-bottom: 1px solid var(--linha);
-  overflow: hidden;
+  isolation: isolate;
+  overflow-x: clip;
 }
 
-/* A trama fica numa camada própria, só no pé da faixa (atrás da instalação e do
-   topo da ficha, longe do texto), e some aos poucos para cima. */
-.topo::before {
+main::before,
+main::after {
   content: "";
   position: absolute;
-  inset: auto 0 0;
-  height: 8rem;
-  background: url("/trama.svg") repeat-x center bottom -1rem / 240px 160px;
-  opacity: var(--trama);
-  mask-image: linear-gradient(to top, #000 45%, transparent);
+  z-index: -1;
+  width: min(42rem, 90vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  filter: blur(64px);
+  opacity: var(--aurora-opacidade);
   pointer-events: none;
+  animation: deriva 18s ease-in-out infinite alternate;
 }
 
-.topo .coluna {
-  position: relative;
+main::before {
+  top: -12rem;
+  left: calc(50% - 45rem);
+  background: radial-gradient(circle, var(--aurora-1), transparent 65%);
+}
+
+main::after {
+  top: -4rem;
+  right: calc(50% - 49rem);
+  background: radial-gradient(circle, var(--aurora-2), transparent 65%);
+  animation-duration: 23s;
+  animation-direction: alternate-reverse;
+}
+
+.abertura {
+  max-width: var(--largura);
+  margin-inline: auto;
+  padding: clamp(2rem, 6vw, 4.5rem) var(--margem) 0;
+}
+
+/* Selo do topo, com o ponto verde do "Agora" do portfólio. */
+.aviso {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin: 0 0 1.5rem;
+  padding: 0.375rem 0.75rem 0.375rem 0.625rem;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: var(--superficie);
+  color: var(--apagado);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.ponto {
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--sucesso);
+  animation: pulso 2.4s ease-out infinite;
 }
 
 h1 {
   margin: 0;
-  font: 700 clamp(2.4rem, 9vw, 3.75rem) / 1 var(--datilografia);
-  letter-spacing: -0.02em;
+  font-size: clamp(2.25rem, 1.2rem + 5.4vw, 4.5rem);
+  font-weight: 650;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  background: var(--degrade-texto);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.subtitulo {
+  width: fit-content;
+  margin: 0.75rem 0 0;
+  font-size: clamp(1.125rem, 1rem + 0.6vw, 1.375rem);
+  font-weight: 550;
+  letter-spacing: -0.01em;
+  background: var(--degrade-marca);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .lema {
-  max-width: 33em;
-  margin: 1rem 0 1.5rem;
+  max-width: 52ch;
+  margin: 1rem 0 0;
+  color: var(--apagado);
   font-size: 1.125rem;
+  line-height: 1.6;
 }
 
-/* Comando de instalação, como uma linha de terminal com o botão de copiar. */
+/* Comando de instalação numa pílula, com o botão de copiar dentro. */
 .instalar {
   display: inline-flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem 0.9rem;
+  gap: 0.75rem;
   max-width: 100%;
-  padding: 0.35rem 0.35rem 0.35rem 0.95rem;
-  border: 1px solid var(--linha);
-  border-radius: 0.5rem;
-  background: var(--ficha);
+  margin-top: 1.75rem;
+  padding: 0.375rem 0.375rem 0.375rem 1.125rem;
+  border: 1px solid var(--borda-forte);
+  border-radius: 999px;
+  background: var(--superficie);
 }
 
 .instalar code {
-  white-space: nowrap;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.9375rem;
 }
 
 .instalar code::before {
   content: "$ ";
-  color: var(--suave);
+  color: var(--sutil);
 }
 
-/* No celular, letra menor para o comando e o botão caberem na mesma linha. */
-@media (max-width: 24rem) {
+/* No celular o comando quebra em duas linhas: a pílula vira um retângulo arredondado. */
+@media (max-width: 26rem) {
   .instalar {
-    gap: 0.5rem;
-  }
-
-  .instalar code {
-    font-size: 0.8125rem;
-  }
-
-  .instalar button {
-    padding: 0.3rem 0.55rem;
+    border-radius: var(--raio);
   }
 }
 
-@media (max-width: 21rem) {
-  .instalar code {
-    font-size: 0.75rem;
-  }
-
-  .instalar code::before {
-    content: none;
-  }
+/* Entrada do topo ao carregar, como no portfólio. */
+.aviso,
+h1,
+.subtitulo,
+.lema,
+.instalar {
+  animation: subir 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
-/* --- A ficha: o formulário como um papel por cima da faixa --- */
+h1 {
+  animation-delay: 0.05s;
+}
 
-.ficha {
-  position: relative;
+.subtitulo {
+  animation-delay: 0.12s;
+}
+
+.lema {
+  animation-delay: 0.18s;
+}
+
+.instalar {
+  animation-delay: 0.24s;
+}
+
+/* ---------- Formulário e janela de código ---------- */
+
+.grade {
   display: grid;
-  gap: 0.5rem;
-  margin-top: -3.5rem;
-  padding: clamp(1.25rem, 4vw, 2rem);
-  border: 1px solid var(--linha);
-  border-radius: 0.75rem;
-  background: var(--ficha);
-  box-shadow: 0 18px 40px -26px var(--sombra);
-  /* O carimbo entra maior e inclinado: sem isto, na animação ele passaria da
-     borda e criaria uma rolagem para o lado no celular. */
-  overflow: hidden;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 1.5rem;
+  max-width: var(--largura);
+  margin: clamp(2.5rem, 6vw, 4rem) auto 0;
+  padding-inline: var(--margem);
 }
 
-/* Fio fino por dentro da borda, como a moldura dos formulários impressos. */
-.ficha::before {
+@media (min-width: 62rem) {
+  .grade {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  }
+}
+
+/* Cartão do portfólio (SpotlightCard.module.css): borda fina, brilho que segue o
+   mouse (--x e --y, do app.mjs) e borda em degradê no hover e no foco. */
+.cartao {
+  position: relative;
+  isolation: isolate;
+  margin: 0;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-grande);
+  background: var(--superficie);
+  box-shadow: var(--sombra-cartao);
+  transition: border-color 0.3s ease;
+}
+
+.cartao::before {
   content: "";
   position: absolute;
-  inset: 5px;
-  border: 1px solid var(--linha);
-  border-radius: 0.55rem;
-  opacity: 0.35;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    26rem circle at var(--x, 50%) var(--y, 0%),
+    color-mix(in srgb, var(--destaque) 14%, transparent),
+    transparent 45%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
   pointer-events: none;
 }
 
+/* A máscara deixa só a moldura de 1px do degradê. */
+.cartao::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  border-radius: inherit;
+  background: var(--degrade-marca);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.cartao:hover {
+  border-color: var(--borda-forte);
+}
+
+.cartao:hover::before,
+.cartao:hover::after,
+.cartao:focus-within::after {
+  opacity: 1;
+}
+
 .documentos {
-  margin: 0 0 1.25rem;
+  min-width: 0;
+  margin: 0;
   padding: 0;
   border: 0;
-  min-width: 0;
 }
 
-legend,
+.documentos legend,
 .rotulo {
   padding: 0;
-  margin-bottom: 0.6rem;
-  font-weight: 650;
+  color: var(--apagado);
+  font-family: var(--fonte-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
+.documentos legend {
+  margin-bottom: 0.75rem;
+}
+
+/* Etiquetas como as do portfólio (TagList.module.css); a escolhida fica com a cor da marca. */
 .opcoes {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
+  gap: 0.375rem;
 }
 
-/* O rádio continua na página (teclado e leitor de tela), mas invisível: quem
-   aparece é a etiqueta logo depois dele. */
+/* flex: os espaços entre o rádio e o texto, no HTML, não viram espaço na tela. */
+.opcoes label {
+  position: relative;
+  display: flex;
+}
+
+/* O rádio fica por cima da etiqueta, invisível: o clique e o teclado continuam nele. */
 .opcoes input {
   position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
   opacity: 0;
-  width: 1px;
-  height: 1px;
+  cursor: pointer;
 }
 
 .opcoes span {
-  display: inline-block;
-  padding: 0.35rem 0.8rem;
-  border: 1px solid var(--linha);
+  display: block;
+  padding: 0.3125rem 0.75rem;
+  border: 1px solid var(--borda-forte);
   border-radius: 999px;
-  font-size: 0.9375rem;
-  cursor: pointer;
-  user-select: none;
+  background: var(--superficie);
+  color: var(--apagado);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
 }
 
-.opcoes span:hover {
-  border-color: var(--tinta);
+.opcoes label:hover span {
+  border-color: var(--borda-campo);
+  color: var(--texto);
 }
 
 .opcoes input:checked + span {
-  background: var(--tinta);
-  border-color: var(--tinta);
-  color: var(--ficha);
+  border-color: var(--destaque);
+  background: color-mix(in srgb, var(--destaque) 16%, transparent);
+  color: var(--texto);
 }
 
 .opcoes input:focus-visible + span {
-  outline: 3px solid var(--carimbo);
+  outline: 2px solid var(--destaque);
   outline-offset: 2px;
 }
 
-/* O campo é a linha onde se escreve: fundo leve e um traço forte embaixo. */
-input[type="text"] {
+.rotulo {
+  display: block;
+  margin: 1.75rem 0 0.5rem;
+}
+
+#valor {
   width: 100%;
-  min-width: 0;
-  padding: 0.65rem 0.85rem 0.5rem;
-  border: 0;
-  border-bottom: 2px solid var(--tinta);
-  border-radius: 0.4rem 0.4rem 0 0;
-  background: var(--campo);
-  color: inherit;
-  font: 1.6rem/1.25 var(--datilografia);
-  letter-spacing: 0.02em;
+  min-height: 3.25rem;
+  padding: 0 1rem;
+  border: 1px solid var(--borda-campo);
+  border-radius: var(--raio);
+  background: var(--fundo-elevado);
+  color: var(--texto);
+  font-family: var(--fonte-mono);
+  font-size: 1.125rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-input[type="text"]:focus {
-  border-bottom-color: var(--carimbo);
+#valor::placeholder {
+  color: var(--sutil);
 }
 
-/* O modelo do formato (000.000.000-00) aparece apagado enquanto o campo está vazio. */
-input[type="text"]::placeholder {
-  color: var(--suave);
-  opacity: 0.6;
+#valor:focus-visible {
+  outline: none;
+  border-color: var(--destaque);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--destaque) 35%, transparent);
 }
 
 .dica {
-  margin: 0.1rem 0 0;
+  margin: 0.5rem 0 0;
+  color: var(--apagado);
   font-size: 0.875rem;
-  color: var(--suave);
 }
 
 .acoes {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }
 
-button {
-  padding: 0.65rem 1.15rem;
-  border: 1.5px solid var(--carimbo);
-  border-radius: 0.5rem;
-  background: var(--carimbo);
-  color: var(--sobre-carimbo);
+/* Botões do portfólio (Button.module.css). */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0 1.125rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
   font: inherit;
-  font-weight: 650;
+  font-size: 0.9375rem;
+  font-weight: 600;
   cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
 }
 
-button.secundario,
-button.copiar {
-  background: transparent;
-  color: var(--carimbo);
+.botao:active {
+  transform: translateY(1px) scale(0.98);
 }
 
-button.copiar {
-  padding: 0.3rem 0.7rem;
-  font-size: 0.875rem;
-}
-
-button:disabled {
+.botao:disabled {
   cursor: progress;
   opacity: 0.6;
 }
 
-/* --- Resultado: no pé da ficha, depois de um picote --- */
-
-.resultado:not(:empty) {
-  display: grid;
-  gap: 1rem;
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 2px dashed var(--linha);
+.principal {
+  background: var(--botao-fundo);
+  color: var(--botao-texto);
 }
 
-/* No computador, os dados à esquerda e o carimbo à direita. */
-@media (min-width: 40rem) {
-  .resultado:not(:empty) {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: start;
-  }
+.principal:hover {
+  background: var(--botao-hover);
+}
 
-  .resultado .carimbo {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-  }
+.secundario {
+  border-color: var(--borda-forte);
+  background: var(--superficie);
+  color: var(--texto);
+}
+
+.secundario:hover {
+  background: var(--superficie-hover);
+}
+
+/* Botão pequeno de copiar; fica verde ao copiar, como o "Copiar e-mail" do portfólio. */
+button.copiar {
+  flex-shrink: 0;
+  min-height: 2rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--borda-forte);
+  border-radius: 999px;
+  background: var(--superficie);
+  color: var(--texto);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+button.copiar:hover {
+  background: var(--superficie-hover);
+}
+
+button.copiar[data-estado="copiado"] {
+  border-color: var(--sucesso);
+  color: var(--sucesso);
+}
+
+/* ---------- Resultado ---------- */
+
+.resultado:not(:empty) {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--borda);
+  animation: subir 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
 .carregando {
   margin: 0;
-  color: var(--suave);
+  color: var(--apagado);
+  font-family: var(--fonte-mono);
+  font-size: 0.875rem;
 }
 
-/* O carimbo: borda dupla, letra datilografada em caixa alta, inclinado e com
-   falhas de tinta (a máscara tinta.png). O texto no HTML continua "CPF válido",
-   em caixa normal, para o leitor de tela. */
-.carimbo {
-  position: relative;
-  justify-self: start;
-  display: inline-flex;
+.veredito {
+  display: flex;
   align-items: center;
-  gap: 0.55rem;
-  margin: 0.25rem 0.5rem;
-  padding: 0.6rem 1.05rem 0.55rem 0.85rem;
-  border: 2.5px solid currentColor;
-  border-radius: 0.55rem;
-  font: 700 clamp(1.15rem, 4.6vw, 1.45rem) / 1.15 var(--datilografia);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  transform: rotate(-3deg);
-  mask: url("/tinta.png") 0 0 / 96px;
+  gap: 0.75rem;
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
 }
 
-.carimbo::after {
-  content: "";
-  position: absolute;
-  inset: 4px;
-  border: 1.5px solid currentColor;
-  border-radius: 0.35rem;
+.veredito strong {
+  font-weight: 600;
 }
 
-.carimbo svg {
-  width: 1.45rem;
-  height: 1.45rem;
-  flex: none;
+/* Ícone num círculo com a cor do resultado: verde para válido, rubi para o resto. */
+.veredito svg {
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0.45rem;
+  border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, currentColor 14%, transparent);
 }
 
-.carimbo[data-estado="valido"] {
-  color: var(--valido);
+.veredito[data-estado="valido"] {
+  color: var(--sucesso);
 }
 
-.carimbo[data-estado="invalido"],
-.carimbo[data-estado="erro"] {
-  color: var(--invalido);
+.veredito[data-estado="invalido"],
+.veredito[data-estado="erro"] {
+  color: var(--rubi);
 }
 
-/* O único movimento da página: o carimbo batendo no papel quando o resultado chega. */
-@media (prefers-reduced-motion: no-preference) {
-  .carimbo {
-    animation: carimbar 280ms cubic-bezier(0.2, 0.8, 0.3, 1);
-  }
-
-  @keyframes carimbar {
-    0% {
-      opacity: 0;
-      transform: scale(1.35) rotate(-8deg);
-    }
-
-    60% {
-      opacity: 1;
-      transform: scale(0.96) rotate(-2deg);
-    }
-  }
+/* O título fica na cor do texto; a cor do resultado vai no ícone. */
+.veredito strong {
+  color: var(--texto);
 }
 
 .motivo {
-  max-width: 32em;
-  margin: 0;
+  margin: 0.75rem 0 0;
+  color: var(--apagado);
 }
 
-/* Os dados do documento válido: rótulo em cima, valor datilografado embaixo. */
 .dados {
   display: grid;
-  gap: 0.75rem;
-  margin: 0;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  gap: 0.625rem 1.25rem;
+  margin: 1.25rem 0 0;
 }
 
 .dados dt {
-  font-size: 0.875rem;
-  color: var(--suave);
+  color: var(--apagado);
+  font-family: var(--fonte-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .dados dd {
@@ -432,71 +844,224 @@ button:disabled {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem 0.75rem;
-  margin: 0.1rem 0 0;
-  font-size: 1.2rem;
+  min-width: 0;
+  margin: 0;
+}
+
+.dados code {
+  min-width: 0;
   overflow-wrap: anywhere;
+  font-size: 0.9375rem;
 }
 
-/* --- Trecho de código --- */
+/* Celular estreito: o nome do dado em cima do valor. */
+@media (max-width: 24rem) {
+  .dados {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.25rem;
+  }
 
-.codigo {
-  margin: 2.75rem 0 3rem;
-}
-
-.codigo-topo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 0.6rem;
-}
-
-h2 {
-  margin: 0;
-  font: 700 1.2rem/1.3 var(--datilografia);
-}
-
-pre {
-  margin: 0;
-  padding: 1.1rem 1.2rem;
-  overflow-x: auto;
-  border-radius: 0.6rem;
-  background: var(--codigo);
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-
-/* No celular, letra um pouco menor para as chamadas caberem sem rolar. */
-@media (max-width: 30rem) {
-  pre {
-    font-size: 0.85rem;
+  .dados dd + dt {
+    margin-top: 0.75rem;
   }
 }
 
+/* ---------- Janela de código (CodeWindow.module.css) ---------- */
+
+.janela {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--raio-grande);
+  background: var(--codigo-fundo);
+  color: var(--codigo-texto);
+  box-shadow:
+    0 40px 80px -32px rgba(139, 92, 246, 0.4),
+    0 1px 0 rgba(255, 255, 255, 0.05) inset;
+  animation: subir 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
+}
+
+/* Linha de luz na borda de cima */
+.janela::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(185, 161, 255, 0.7), transparent);
+}
+
+.janela-topo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem 0.625rem 1rem;
+  border-bottom: 1px solid var(--codigo-borda);
+}
+
+.bolinhas {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.bolinhas span {
+  width: 0.6875rem;
+  height: 0.6875rem;
+  border-radius: 50%;
+  background: #3a3a4d;
+}
+
+/* Em tela bem estreita, as bolinhas (enfeite) saem para o título caber numa linha. */
+@media (max-width: 24rem) {
+  .bolinhas {
+    display: none;
+  }
+}
+
+.janela h2 {
+  flex: 1;
+  margin: 0;
+  color: #8f8fab;
+  font-family: var(--fonte-mono);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* Dentro da janela, que é sempre escura, o botão usa as cores do escuro. */
+.janela button.copiar {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--codigo-texto);
+}
+
+.janela button.copiar:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.janela button.copiar[data-estado="copiado"] {
+  border-color: #4ade80;
+  color: #4ade80;
+}
+
+.janela pre {
+  margin: 0;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  font-size: clamp(0.8125rem, 0.76rem + 0.2vw, 0.875rem);
+  line-height: 1.75;
+}
+
+.janela :focus-visible {
+  outline-color: #b9a1ff;
+}
+
+.palavra {
+  color: var(--codigo-palavra);
+}
+
+.constante {
+  color: var(--codigo-constante);
+}
+
+.string {
+  color: var(--codigo-string);
+}
+
+.literal {
+  color: var(--codigo-literal);
+}
+
 .comentario {
-  color: var(--suave);
+  color: var(--codigo-comentario);
 }
 
 .nota {
-  margin: 0.8rem 0 0;
+  margin: 0;
+  padding: 0.875rem 1.5rem 1rem;
+  border-top: 1px solid var(--codigo-borda);
+  color: #a3a3b8;
   font-size: 0.875rem;
-  color: var(--suave);
 }
 
 .nota code {
-  color: var(--tinta);
+  color: var(--codigo-texto);
   overflow-wrap: anywhere;
 }
 
-footer {
-  padding-bottom: 3rem;
-  font-size: 0.875rem;
-  color: var(--suave);
+.nota a {
+  color: #b9a1ff;
 }
 
-/* O fio fica no parágrafo, para começar e terminar junto com o texto. */
-footer p {
+/* ---------- Rodapé (Footer.module.css) ---------- */
+
+.rodape {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  width: calc(100% - 2 * var(--margem));
+  max-width: calc(var(--largura) - 2 * var(--margem));
+  margin: clamp(3.5rem, 2.25rem + 3.5vw, 5rem) auto 0;
+  padding: 2rem 0 3rem;
+  border-top: 1px solid var(--borda);
+  color: var(--sutil);
+  font-size: 0.875rem;
+}
+
+.rodape p {
   margin: 0;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--linha);
+}
+
+.rodape a {
+  color: var(--apagado);
+}
+
+.metodos {
+  color: var(--apagado);
+  font-family: var(--fonte-mono);
+  font-size: 0.8125rem;
+}
+
+/* ---------- Movimento ---------- */
+
+@keyframes subir {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+}
+
+@keyframes deriva {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(6rem, 3rem, 0) scale(1.15);
+  }
+}
+
+@keyframes pulso {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--sucesso) 60%, transparent);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 0.5rem transparent;
+  }
+}
+
+/* Respeita quem pediu ao sistema para reduzir animações. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
