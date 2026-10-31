@@ -191,8 +191,8 @@ Ruby que faz o mesmo.
 
 A página (`public/`) é HTML, CSS e JavaScript puro, sem build, e chama uma função Ruby
 da Vercel (`api/validar.rb`) que usa a própria gem, então as regras ficam num lugar só.
-O visual imita um documento brasileiro; a fonte datilografada é a
-[Courier Prime](https://github.com/quoteunquoteapps/CourierPrime) (licença OFL, em
+O visual segue o do [portfólio do autor](https://pedrassolli.vercel.app), com as fontes
+[Geist e Geist Mono](https://github.com/vercel/geist-font) (licença OFL, em
 `public/fontes`).
 
 ```

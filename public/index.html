@@ -18,107 +18,178 @@
       property="og:description"
       content="Teste no navegador a gem Ruby br_validators: CPF, CNPJ alfanumérico, CNS, Pix, boleto, CEP, telefone, placa, RENAVAM e mais."
     />
-    <!-- Cor da barra do navegador no celular, igual ao fundo da página em cada tema. -->
-    <meta name="theme-color" content="#eef1e8" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#111612" media="(prefers-color-scheme: dark)" />
     <meta property="og:image" content="https://br-validators.vercel.app/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="br_validators: um CPF com o carimbo de válido" />
+    <meta property="og:image:alt" content="br_validators: um CPF validado em Ruby" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <!-- A fonte datilografada aparece logo no título: carregar junto com o CSS evita a troca de fonte na tela. -->
-    <link rel="preload" href="/fontes/courier-prime-bold.woff" as="font" type="font/woff" crossorigin />
-    <link rel="preload" href="/fontes/courier-prime-regular.woff" as="font" type="font/woff" crossorigin />
+    <!-- Cor da barra do navegador no celular; o tema.js troca no tema claro. -->
+    <meta name="theme-color" content="#09090f" />
+    <script src="/tema.js"></script>
+    <!-- As fontes aparecem logo no título: carregar junto com o CSS evita a troca na tela. -->
+    <link rel="preload" href="/fontes/geist.woff" as="font" type="font/woff" crossorigin />
+    <link rel="preload" href="/fontes/geist-mono.woff" as="font" type="font/woff" crossorigin />
     <link rel="stylesheet" href="/style.css" />
     <script type="module" src="/app.mjs"></script>
   </head>
   <body>
-    <!-- A faixa do topo tem a trama de linhas finas (trama.svg), como o fundo dos documentos. -->
+    <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+    <!-- Mesmo cabeçalho do portfólio: a marca à esquerda, links e tema à direita. -->
     <header class="topo">
-      <div class="coluna">
+      <div class="topo-dentro">
+        <a class="marca" href="/">
+          <span class="selo" aria-hidden="true">br</span>
+          <span>br_validators</span>
+        </a>
+        <nav aria-label="Links do projeto">
+          <ul class="links">
+            <li><a href="https://github.com/PedroPedrassolli/br_validators">GitHub</a></li>
+            <li><a href="https://rubygems.org/gems/br_validators">RubyGems</a></li>
+          </ul>
+        </nav>
+        <!-- O rótulo muda com o tema (app.mjs); este é o do tema escuro, o padrão. -->
+        <button type="button" id="tema" class="botao-tema" aria-label="Mudar para o tema claro">
+          <svg class="sol" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+            />
+          </svg>
+          <svg class="lua" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="conteudo" tabindex="-1">
+      <section class="abertura">
+        <p class="aviso"><span class="ponto" aria-hidden="true"></span>Código aberto · 12 documentos</p>
         <h1>br_validators</h1>
+        <p class="subtitulo">Documentos brasileiros validados em Ruby</p>
         <p class="lema">
-          Valide e formate documentos brasileiros com uma gem Ruby. Escolha um documento e teste aqui: quem responde é a
-          própria gem, e nada do que você digita é guardado.
+          Valide e formate documentos com uma gem Ruby. Escolha um documento e teste aqui: quem responde é a própria
+          gem, e nada do que você digita é guardado.
         </p>
         <div class="instalar">
           <code id="comando">gem install br_validators</code>
           <button type="button" class="copiar" data-copiar="comando">Copiar</button>
         </div>
-      </div>
-    </header>
-
-    <main class="coluna">
-      <!-- O formulário é a "ficha": um papel por cima da faixa, com o resultado carimbado no pé. -->
-      <form id="formulario" class="ficha">
-        <!--
-          Botões de rádio de verdade, com cara de etiqueta: dá para escolher com as
-          setas do teclado e o leitor de tela anuncia "1 de 12". A ordem e os
-          valores são os mesmos de DOCUMENTOS em resultado.mjs.
-        -->
-        <fieldset class="documentos">
-          <legend>Documento</legend>
-          <div class="opcoes">
-            <label><input type="radio" name="documento" value="cpf" checked /><span>CPF</span></label>
-            <label><input type="radio" name="documento" value="cnpj" /><span>CNPJ</span></label>
-            <label><input type="radio" name="documento" value="cns" /><span>CNS</span></label>
-            <label><input type="radio" name="documento" value="titulo_eleitor" /><span>Título de eleitor</span></label>
-            <label><input type="radio" name="documento" value="pix" /><span>Chave Pix</span></label>
-            <label><input type="radio" name="documento" value="boleto" /><span>Boleto</span></label>
-            <label><input type="radio" name="documento" value="cep" /><span>CEP</span></label>
-            <label><input type="radio" name="documento" value="telefone" /><span>Telefone</span></label>
-            <label><input type="radio" name="documento" value="placa" /><span>Placa</span></label>
-            <label><input type="radio" name="documento" value="renavam" /><span>RENAVAM</span></label>
-            <label><input type="radio" name="documento" value="chave_acesso" /><span>Chave de NF-e</span></label>
-            <label><input type="radio" name="documento" value="processo_cnj" /><span>Processo judicial</span></label>
-          </div>
-        </fieldset>
-
-        <!--
-          autocapitalize/autocorrect desligados: o teclado do celular colocaria a
-          primeira letra do e-mail da chave Pix em maiúscula, e a chave seria recusada.
-          O rótulo, a dica e o inputmode (teclado de números ou de letras) mudam com o documento.
-        -->
-        <label for="valor" id="rotulo" class="rotulo">Número do CPF</label>
-        <input
-          id="valor"
-          name="valor"
-          type="text"
-          inputmode="numeric"
-          autocomplete="off"
-          autocapitalize="none"
-          autocorrect="off"
-          spellcheck="false"
-          maxlength="100"
-          aria-describedby="dica"
-          required
-        />
-        <p id="dica" class="dica">11 dígitos, com ou sem pontos e hífen.</p>
-
-        <div class="acoes">
-          <button type="submit" id="validar">Validar</button>
-          <button type="button" id="exemplo" class="secundario">Testar com um exemplo</button>
-        </div>
-
-        <!-- Preenchido pelo app.mjs depois de validar. -->
-        <section id="resultado" class="resultado" aria-live="polite"></section>
-      </form>
-
-      <section class="codigo" aria-labelledby="titulo-codigo">
-        <div class="codigo-topo">
-          <h2 id="titulo-codigo">No seu código Ruby</h2>
-          <button type="button" class="copiar" data-copiar="trecho">Copiar</button>
-        </div>
-        <pre><code id="trecho"></code></pre>
-        <p class="nota">
-          Num model do Rails, a mesma regra fica assim: <code id="rails">validates :cpf, cpf: true</code>. Mais exemplos
-          no <a href="https://github.com/PedroPedrassolli/br_validators#readme">README</a>.
-        </p>
       </section>
+
+      <div class="grade">
+        <!-- O cartão do formulário, com o resultado no pé. -->
+        <form id="formulario" class="cartao">
+          <!--
+            Botões de rádio de verdade, com cara de etiqueta: dá para escolher com as
+            setas do teclado e o leitor de tela anuncia "1 de 12". A ordem e os
+            valores são os mesmos de DOCUMENTOS em resultado.mjs.
+          -->
+          <fieldset class="documentos">
+            <legend>Documento</legend>
+            <div class="opcoes">
+              <label>
+                <input type="radio" name="documento" value="cpf" checked />
+                <span>CPF</span>
+              </label>
+              <label>
+                <input type="radio" name="documento" value="cnpj" />
+                <span>CNPJ</span>
+              </label>
+              <label>
+                <input type="radio" name="documento" value="cns" />
+                <span>CNS</span>
+              </label>
+              <label>
+                <input type="radio" name="documento" value="titulo_eleitor" />
+                <span>Título de eleitor</span>
+              </label>
+              <label>
+                <input type="radio" name="documento" value="pix" />
+                <span>Chave Pix</span>
+              </label>
+              <label>
+                <input type="radio" name="documento" value="boleto" />
+                <span>Boleto</span>
+              </label>
+              <label>
+                <input type="radio" name="documento" value="cep" />
+                <span>CEP</span>
+              </label>
+              <label>
+                <input type="radio" name="documento" value="telefone" />
+                <span>Telefone</span>
+              </label>
+              <label>
+                <input type="radio" name="documento" value="placa" />
+                <span>Placa</span>
+              </label>
+              <label>
+                <input type="radio" name="documento" value="renavam" />
+                <span>RENAVAM</span>
+              </label>
+              <label>
+                <input type="radio" name="documento" value="chave_acesso" />
+                <span>Chave de NF-e</span>
+              </label>
+              <label>
+                <input type="radio" name="documento" value="processo_cnj" />
+                <span>Processo judicial</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <!--
+            autocapitalize/autocorrect desligados: o teclado do celular colocaria a
+            primeira letra do e-mail da chave Pix em maiúscula, e a chave seria recusada.
+            O rótulo, a dica e o inputmode (teclado de números ou de letras) mudam com o documento.
+          -->
+          <label for="valor" id="rotulo" class="rotulo">Número do CPF</label>
+          <input
+            id="valor"
+            name="valor"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            autocapitalize="none"
+            autocorrect="off"
+            spellcheck="false"
+            maxlength="100"
+            aria-describedby="dica"
+            required
+          />
+          <p id="dica" class="dica">11 dígitos, com ou sem pontos e hífen.</p>
+
+          <div class="acoes">
+            <button type="submit" id="validar" class="botao principal">Validar</button>
+            <button type="button" id="exemplo" class="botao secundario">Testar com um exemplo</button>
+          </div>
+
+          <!-- Preenchido pelo app.mjs depois de validar. -->
+          <section id="resultado" class="resultado" aria-live="polite"></section>
+        </form>
+
+        <!-- Janela de código como a do topo do portfólio, com as cores do tema Dracula. -->
+        <section class="janela" aria-labelledby="titulo-codigo">
+          <div class="janela-topo">
+            <span class="bolinhas" aria-hidden="true"><span></span><span></span><span></span></span>
+            <h2 id="titulo-codigo">No seu código Ruby</h2>
+            <button type="button" class="copiar" data-copiar="trecho">Copiar</button>
+          </div>
+          <!-- tabindex: no celular as linhas longas rolam de lado, e o teclado também precisa chegar lá. -->
+          <pre tabindex="0"><code id="trecho"></code></pre>
+          <p class="nota">
+            Num model do Rails: <code id="rails">validates :cpf, cpf: true</code>. Mais exemplos no
+            <a href="https://github.com/PedroPedrassolli/br_validators#readme">README</a>.
+          </p>
+        </section>
+      </div>
     </main>
 
-    <footer class="coluna">
+    <footer class="rodape">
+      <p class="metodos">valid? · format · strip</p>
       <p>
         Código aberto no <a href="https://github.com/PedroPedrassolli/br_validators">GitHub</a>, publicado no
         <a href="https://rubygems.org/gems/br_validators">RubyGems</a>. Feito por

@@ -279,3 +279,33 @@ export function trechoRuby(documento, valor, resposta = null) {
   }
   return linhas;
 }
+
+// Pedaços de código que ganham cor na janela de código (cores do tema Dracula, as
+// mesmas do portfólio): textos entre aspas, a palavra require, constantes
+// (BrValidators::CPF), símbolos (:mercosul) e true, false e nil.
+const PEDACOS_COM_COR = /"(?:[^"\\]|\\.)*"|\brequire\b|\b(?:true|false|nil)\b|\b[A-Z]\w*(?:::[A-Z]\w*)*|:\w+[?!]?/g;
+
+function tipoDoPedaco(texto) {
+  if (texto.startsWith('"')) return "string";
+  if (texto === "require") return "palavra";
+  if (/^[A-Z]/.test(texto)) return "constante";
+  return "literal";
+}
+
+// Separa uma linha do trecho Ruby em pedaços [tipo, texto]; o tipo vira a classe
+// do <span> (tipo "" fica na cor normal). Juntando os textos, volta a linha inteira.
+// Na linha "# => resultado", o "# =>" é comentário e o resultado ganha a cor dele.
+export function realce(linha) {
+  if (linha.startsWith("# => ")) return [["comentario", "# => "], ...realce(linha.slice(5))];
+  if (linha.startsWith("#")) return [["comentario", linha]];
+
+  const pedacos = [];
+  let fim = 0;
+  for (const achado of linha.matchAll(PEDACOS_COM_COR)) {
+    if (achado.index > fim) pedacos.push(["", linha.slice(fim, achado.index)]);
+    pedacos.push([tipoDoPedaco(achado[0]), achado[0]]);
+    fim = achado.index + achado[0].length;
+  }
+  if (fim < linha.length) pedacos.push(["", linha.slice(fim)]);
+  return pedacos;
+}
