@@ -1,0 +1,3 @@
+# Bibliotecas padrão do Ruby que as assinaturas usam (o rbs collection lê daqui).
+dependencies:
+  - name: uri

@@ -1,0 +1,130 @@
+# Assinaturas de tipo (RBS) da parte pública da gem, para quem usa Steep, o
+# Ruby LSP ou outra ferramenta que lê tipos. Os validadores do ActiveModel
+# (CpfValidator...) ficam de fora: quem chama é o Rails, não o seu código.
+#
+# Confira com: bundle exec rbs -r uri -I sig validate
+module BrValidators
+  VERSION: String
+
+  # Converte qualquer valor em texto UTF-8 (uso interno dos módulos).
+  def self.texto: (untyped valor) -> String
+
+  module CPF
+    def self.valid?: (untyped value) -> bool
+    def self.format: (untyped value) -> String?
+    def self.strip: (untyped value) -> String
+  end
+
+  module CNPJ
+    def self.valid?: (untyped value) -> bool
+    def self.format: (untyped value) -> String?
+    def self.strip: (untyped value) -> String
+  end
+
+  module CNS
+    def self.valid?: (untyped value) -> bool
+    def self.format: (untyped value) -> String?
+    def self.strip: (untyped value) -> String
+  end
+
+  module TituloEleitor
+    def self.valid?: (untyped value) -> bool
+    def self.format: (untyped value) -> String?
+    def self.strip: (untyped value) -> String
+    def self.uf: (untyped value) -> String?
+  end
+
+  module Pix
+    type tipo = :cpf | :cnpj | :phone | :email | :evp
+
+    def self.valid?: (untyped value) -> bool
+    def self.type: (untyped value) -> tipo?
+  end
+
+  module Boleto
+    type tipo = :cobranca | :arrecadacao
+
+    def self.valid?: (untyped value) -> bool
+    def self.format: (untyped value) -> String?
+    def self.strip: (untyped value) -> String
+    def self.type: (untyped value) -> tipo?
+  end
+
+  module CEP
+    def self.valid?: (untyped value) -> bool
+    def self.format: (untyped value) -> String?
+    def self.strip: (untyped value) -> String
+  end
+
+  module Telefone
+    type tipo = :celular | :fixo
+
+    DDDS: Array[String]
+
+    def self.valid?: (untyped value) -> bool
+    def self.format: (untyped value) -> String?
+    def self.strip: (untyped value) -> String
+    def self.type: (untyped value) -> tipo?
+    def self.ddd: (untyped value) -> String?
+  end
+
+  module Placa
+    type tipo = :antiga | :mercosul
+
+    def self.valid?: (untyped value) -> bool
+    def self.format: (untyped value) -> String?
+    def self.strip: (untyped value) -> String
+    def self.type: (untyped value) -> tipo?
+    def self.mercosul: (untyped value) -> String?
+    def self.antiga: (untyped value) -> String?
+  end
+
+  module RENAVAM
+    def self.valid?: (untyped value) -> bool
+    def self.format: (untyped value) -> String?
+    def self.strip: (untyped value) -> String
+  end
+
+  module ChaveAcesso
+    def self.valid?: (untyped value) -> bool
+    def self.format: (untyped value) -> String?
+    def self.strip: (untyped value) -> String
+    def self.modelo: (untyped value) -> String?
+  end
+
+  module ProcessoCNJ
+    SEGMENTOS: Hash[String, String]
+
+    def self.valid?: (untyped value) -> bool
+    def self.format: (untyped value) -> String?
+    def self.strip: (untyped value) -> String
+    def self.segmento: (untyped value) -> String?
+  end
+
+  # Opcional: require "br_validators/consulta".
+  module Consulta
+    # Qualquer objeto com get(uri) que devolva [status, corpo] serve de cliente.
+    interface _Cliente
+      def get: (URI::Generic uri) -> [Integer, String]
+    end
+
+    BASE: String
+    TIMEOUT: Integer
+
+    class Erro < StandardError
+    end
+
+    attr_writer self.cliente: _Cliente
+    def self.cliente: () -> _Cliente
+
+    # O JSON da BrasilAPI como Hash, ou nil quando o dado é inválido ou não existe.
+    def self.cep: (untyped valor) -> Hash[String, untyped]?
+    def self.cnpj: (untyped valor) -> Hash[String, untyped]?
+    def self.banco: (untyped codigo) -> Hash[String, untyped]?
+    def self.ddd: (untyped valor) -> Hash[String, untyped]?
+
+    module HTTP
+      def self.get: (URI::Generic uri) -> [Integer, String]
+    end
+  end
+end

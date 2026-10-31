@@ -86,6 +86,11 @@ jobs:
       - name: Testes
         run: bundle exec rake test
 
+      # Os tipos de sig/ precisam existir e estar escritos certo. Que cada método
+      # público tenha assinatura, quem confere é o test/assinaturas_test.rb.
+      - name: Assinaturas de tipo (RBS)
+        run: bundle exec rbs -r uri -I sig validate
+
       - name: Cobertura
         run: |
           line=$(ruby -rjson -e 'puts JSON.parse(File.read("coverage/.last_run.json")).dig("result", "line")')
@@ -101,6 +106,8 @@ jobs:
           cd "$RUNNER_TEMP"
           ruby -e 'require "br_validators"; abort "a gem instalada não valida" unless BrValidators::CPF.valid?("123.456.789-09")'
           ruby -e 'require "br_validators/consulta"; abort "faltou a consulta" unless defined?(BrValidators::Consulta::HTTP)'
+          ruby -e 'require "br_validators/documentos"; abort "faltou a entrada sem Rails" unless BrValidators::CNS.valid?("898 0000 0000 0436")'
+          gem contents br_validators | grep -q "sig/br_validators.rbs" || { echo "::error::As assinaturas (sig/) ficaram fora do pacote."; exit 1; }
 
   lint:
     name: Estilo (RuboCop)

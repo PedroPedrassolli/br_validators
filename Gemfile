@@ -11,6 +11,8 @@ group :development, :test do
   gem "activemodel"
   gem "minitest"
   gem "rake"
+  # Confere as assinaturas de tipo de sig/ (rbs validate).
+  gem "rbs", require: false
   gem "rubocop", require: false
   gem "simplecov", require: false
 end

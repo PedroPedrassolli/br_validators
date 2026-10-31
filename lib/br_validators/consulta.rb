@@ -3,7 +3,8 @@
 require "json"
 require "net/http"
 require "openssl"
-require_relative "../br_validators"
+# Só os documentos (para validar antes de consultar), sem os validadores do Rails.
+require_relative "documentos"
 
 module BrValidators
   # Consultas online pela BrasilAPI (https://brasilapi.com.br), um serviço gratuito,
