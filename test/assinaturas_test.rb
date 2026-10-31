@@ -9,7 +9,7 @@ require "br_validators/consulta"
 describe "sig/br_validators.rbs" do
   # Os módulos da gem (BrValidators e os de dentro dele), sem as classes.
   def modulos(raiz = BrValidators)
-    filhos = raiz.constants.map { |nome| raiz.const_get(nome) }.grep(Module).reject { |item| item.is_a?(Class) }
+    filhos = raiz.constants.map { |nome| raiz.const_get(nome) }.grep(Module).grep_v(Class)
     [raiz] + filhos.flat_map { |filho| modulos(filho) }
   end
 
