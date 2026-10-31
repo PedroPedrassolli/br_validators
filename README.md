@@ -189,8 +189,11 @@ pode abrir direto num documento: `?documento=placa`, `?documento=boleto`... A p�
 mostra o resultado, explica por que um número é inválido e monta o trecho de código
 Ruby que faz o mesmo.
 
-A página (`public/`) é HTML e JavaScript puro e chama uma função Ruby da Vercel
-(`api/validar.rb`) que usa a própria gem, então as regras ficam num lugar só:
+A página (`public/`) é HTML, CSS e JavaScript puro, sem build, e chama uma função Ruby
+da Vercel (`api/validar.rb`) que usa a própria gem, então as regras ficam num lugar só.
+O visual imita um documento brasileiro; a fonte datilografada é a
+[Courier Prime](https://github.com/quoteunquoteapps/CourierPrime) (licença OFL, em
+`public/fontes`).
 
 ```
 GET /api/validar?documento=cnpj&valor=12.ABC.345/01DE-35

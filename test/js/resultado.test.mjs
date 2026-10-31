@@ -147,7 +147,7 @@ describe("trechoRuby", () => {
 describe("DOCUMENTOS", () => {
   it("tem tudo o que a página usa para cada documento", () => {
     for (const [chave, documento] of Object.entries(DOCUMENTOS)) {
-      for (const campo of ["exemplo", "nome", "rotulo", "dica", "modulo", "regra"]) {
+      for (const campo of ["mascara", "exemplo", "nome", "rotulo", "dica", "modulo", "regra"]) {
         assert.ok(documento[campo]?.length > 0, `${chave} sem ${campo}`);
       }
       assert.ok(["numeric", "tel", "text"].includes(documento.teclado), `${chave}: teclado`);

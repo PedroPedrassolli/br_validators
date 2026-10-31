@@ -82,6 +82,10 @@ function mostrar({ estado, titulo, dados, motivo }) {
   }
 
   resultado.replaceChildren(...partes);
+
+  // No celular, com o teclado aberto, o resultado pode ficar fora da tela.
+  const semMovimento = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  resultado.scrollIntoView({ block: "nearest", behavior: semMovimento ? "auto" : "smooth" });
 }
 
 // Trecho de código Ruby que faz o mesmo que a página. Sem resposta, mostra só as
@@ -109,6 +113,7 @@ function ajustarCampo() {
   const campo = DOCUMENTOS[documentoAtual()];
   rotulo.textContent = campo.rotulo;
   dica.textContent = campo.dica;
+  valor.placeholder = campo.mascara;
   valor.inputMode = campo.teclado;
   atualizarTrecho();
 }
@@ -160,17 +165,21 @@ valor.addEventListener("input", () => {
 });
 
 // Qualquer botão "Copiar" da página: copia o texto dele ou o do elemento indicado.
+// Se o navegador não deixar copiar, seleciona o texto para a pessoa usar Ctrl+C.
 document.addEventListener("click", async (evento) => {
   const botao = evento.target.closest("button.copiar");
   if (!botao) return;
-  const texto = botao.dataset.texto ?? document.getElementById(botao.dataset.copiar).textContent;
+  const alvo = botao.dataset.copiar && document.getElementById(botao.dataset.copiar);
   try {
-    await navigator.clipboard.writeText(texto);
+    await navigator.clipboard.writeText(botao.dataset.texto ?? alvo.textContent);
     botao.textContent = "Copiado";
   } catch {
-    botao.textContent = "Não deu para copiar";
+    if (alvo) getSelection().selectAllChildren(alvo);
+    botao.textContent = alvo ? "Selecionado" : "Não deu para copiar";
   }
-  setTimeout(() => (botao.textContent = "Copiar"), 1500);
+  // Um clique novo antes de voltar ao normal recomeça a contagem.
+  clearTimeout(Number(botao.dataset.espera));
+  botao.dataset.espera = setTimeout(() => (botao.textContent = "Copiar"), 1500);
 });
 
 // Abre no documento do link (?documento=placa), se houver um.
