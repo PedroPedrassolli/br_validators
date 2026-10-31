@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "active_model"
+require_relative "documentos"
 
 # Validação nos models do Rails (ou de qualquer classe com ActiveModel):
 #
@@ -10,6 +11,10 @@ require "active_model"
 #
 # O Rails procura a classe pelo nome da opção ("cpf: true" vira CpfValidator),
 # por isso os validadores ficam no nível de cima, fora do módulo BrValidators.
+# Efeito colateral: se o app já tem um validador com o mesmo nome (por exemplo,
+# app/validators/cpf_validator.rb), o Rails ignora o arquivo do app sem avisar,
+# porque a classe já existe. Para ficar com o do app, o Gemfile carrega só os
+# documentos: gem "br_validators", require: "br_validators/documentos".
 # As mensagens de erro estão em lib/br_validators/locale (pt-BR e en).
 I18n.load_path += Dir[File.expand_path("locale/*.yml", __dir__)]
 

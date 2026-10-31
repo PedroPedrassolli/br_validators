@@ -24,11 +24,14 @@ Gem::Specification.new do |spec|
     "source_code_uri" => spec.homepage,
     "changelog_uri" => "#{spec.homepage}/blob/main/CHANGELOG.md",
     "bug_tracker_uri" => "#{spec.homepage}/issues",
+    # Documentação gerada a partir dos comentários do código, sem configurar nada.
+    "documentation_uri" => "https://rubydoc.info/gems/br_validators",
     "rubygems_mfa_required" => "true"
   }
 
-  # Só o código e os textos vão para o pacote; testes e workflows ficam no repositório.
-  spec.files = Dir["lib/**/*.{rb,yml}", "README.md", "CHANGELOG.md", "LICENSE"]
+  # Só o código, as assinaturas de tipo e os textos vão para o pacote; testes e
+  # workflows ficam no repositório.
+  spec.files = Dir["lib/**/*.{rb,yml}", "sig/**/*.{rbs,yaml}", "README.md", "CHANGELOG.md", "LICENSE"]
 
   # Sem dependências em tempo de execução: a integração com o ActiveModel só é
   # carregada quando a aplicação já tem o Rails (ou o ActiveModel) instalado.

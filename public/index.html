@@ -3,71 +3,72 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>br_validators: teste os validadores</title>
+    <title>br_validators: valide documentos brasileiros</title>
     <meta
       name="description"
-      content="Teste no navegador a gem Ruby br_validators: CPF, CNPJ alfanumérico, CNS, Pix, boleto, CEP, telefone, placa, RENAVAM e mais."
+      content="Teste no navegador a gem Ruby br_validators: CPF, CNPJ alfanumérico, CNS, Pix, boleto, CEP, telefone, placa, RENAVAM, título de eleitor, chave de NF-e e processo judicial."
     />
     <!-- O site também abre em br-validators-gem.vercel.app; o canonical diz qual é o principal. -->
     <link rel="canonical" href="https://br-validators.vercel.app/" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pt_BR" />
     <meta property="og:url" content="https://br-validators.vercel.app/" />
-    <meta property="og:title" content="br_validators: teste os validadores" />
+    <meta property="og:title" content="br_validators: valide documentos brasileiros" />
     <meta
       property="og:description"
       content="Teste no navegador a gem Ruby br_validators: CPF, CNPJ alfanumérico, CNS, Pix, boleto, CEP, telefone, placa, RENAVAM e mais."
     />
     <!-- Cor da barra do navegador no celular, igual ao fundo da página em cada tema. -->
-    <meta name="theme-color" content="#f7f7f5" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#161615" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#eef2ec" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#121714" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/style.css" />
     <script type="module" src="/app.mjs"></script>
   </head>
   <body>
-    <header>
+    <header class="topo">
       <h1>br_validators</h1>
-      <p>
-        Teste os validadores da gem Ruby no navegador. Quem valida é a própria gem, rodando numa função Ruby; nada do
-        que você digita é guardado.
+      <p class="lema">
+        Gem Ruby que valida e formata documentos brasileiros. Escolha um documento e teste: quem responde é a própria
+        gem, e nada do que você digita é guardado.
       </p>
+      <div class="instalar">
+        <code id="comando">gem install br_validators</code>
+        <button type="button" class="copiar" data-copiar="comando">Copiar</button>
+      </div>
     </header>
 
     <main>
       <form id="formulario">
-        <label for="documento">Documento</label>
-        <select id="documento" name="documento">
-          <optgroup label="Pessoas e empresas">
-            <option value="cpf">CPF</option>
-            <option value="cnpj">CNPJ (numérico ou alfanumérico)</option>
-            <option value="cns">CNS (Cartão Nacional de Saúde)</option>
-            <option value="titulo_eleitor">Título de eleitor</option>
-          </optgroup>
-          <optgroup label="Pagamentos">
-            <option value="pix">Chave Pix</option>
-            <option value="boleto">Linha digitável de boleto</option>
-          </optgroup>
-          <optgroup label="Endereço e contato">
-            <option value="cep">CEP</option>
-            <option value="telefone">Telefone (fixo ou celular)</option>
-          </optgroup>
-          <optgroup label="Veículos">
-            <option value="placa">Placa (antiga ou Mercosul)</option>
-            <option value="renavam">RENAVAM</option>
-          </optgroup>
-          <optgroup label="Fiscal e jurídico">
-            <option value="chave_acesso">Chave de acesso (NF-e, CT-e)</option>
-            <option value="processo_cnj">Número de processo (CNJ)</option>
-          </optgroup>
-        </select>
+        <!--
+          Botões de rádio de verdade, com cara de etiqueta: dá para escolher com as
+          setas do teclado e o leitor de tela anuncia "1 de 12". A ordem e os
+          valores são os mesmos de DOCUMENTOS em resultado.mjs.
+        -->
+        <fieldset class="documentos">
+          <legend>Documento</legend>
+          <div class="opcoes">
+            <label><input type="radio" name="documento" value="cpf" checked /><span>CPF</span></label>
+            <label><input type="radio" name="documento" value="cnpj" /><span>CNPJ</span></label>
+            <label><input type="radio" name="documento" value="cns" /><span>CNS</span></label>
+            <label><input type="radio" name="documento" value="titulo_eleitor" /><span>Título de eleitor</span></label>
+            <label><input type="radio" name="documento" value="pix" /><span>Chave Pix</span></label>
+            <label><input type="radio" name="documento" value="boleto" /><span>Boleto</span></label>
+            <label><input type="radio" name="documento" value="cep" /><span>CEP</span></label>
+            <label><input type="radio" name="documento" value="telefone" /><span>Telefone</span></label>
+            <label><input type="radio" name="documento" value="placa" /><span>Placa</span></label>
+            <label><input type="radio" name="documento" value="renavam" /><span>RENAVAM</span></label>
+            <label><input type="radio" name="documento" value="chave_acesso" /><span>Chave de NF-e</span></label>
+            <label><input type="radio" name="documento" value="processo_cnj" /><span>Processo judicial</span></label>
+          </div>
+        </fieldset>
 
         <!--
           autocapitalize/autocorrect desligados: o teclado do celular colocaria a
           primeira letra do e-mail da chave Pix em maiúscula, e a chave seria recusada.
-          O inputmode (teclado de números ou de letras) e a dica mudam com o documento.
+          O rótulo, a dica e o inputmode (teclado de números ou de letras) mudam com o documento.
         -->
-        <label for="valor">Número ou chave</label>
+        <label for="valor" id="rotulo" class="rotulo">Número do CPF</label>
         <input
           id="valor"
           name="valor"
@@ -85,17 +86,30 @@
 
         <div class="acoes">
           <button type="submit" id="validar">Validar</button>
-          <button type="button" id="exemplo" class="secundario">Usar um exemplo</button>
+          <button type="button" id="exemplo" class="secundario">Testar com um exemplo</button>
         </div>
       </form>
 
-      <section id="resultado" aria-live="polite"></section>
+      <!-- Preenchido pelo app.mjs depois de validar. -->
+      <section id="resultado" class="resultado" aria-live="polite"></section>
+
+      <section class="codigo" aria-labelledby="titulo-codigo">
+        <div class="codigo-topo">
+          <h2 id="titulo-codigo">No seu código Ruby</h2>
+          <button type="button" class="copiar" data-copiar="trecho">Copiar</button>
+        </div>
+        <pre><code id="trecho"></code></pre>
+        <p class="nota">
+          Num model do Rails, a mesma regra fica assim: <code id="rails">validates :cpf, cpf: true</code>. Mais exemplos
+          no <a href="https://github.com/PedroPedrassolli/br_validators#readme">README</a>.
+        </p>
+      </section>
     </main>
 
     <footer>
       <p>
-        Código aberto no
-        <a href="https://github.com/PedroPedrassolli/br_validators">GitHub</a>. Feito por
+        Código aberto no <a href="https://github.com/PedroPedrassolli/br_validators">GitHub</a>, publicado no
+        <a href="https://rubygems.org/gems/br_validators">RubyGems</a>. Feito por
         <a href="https://pedrassolli.vercel.app">Pedro Pedrassolli</a>. Os exemplos são fictícios.
       </p>
     </footer>
