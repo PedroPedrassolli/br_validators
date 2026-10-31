@@ -118,7 +118,7 @@ module BrValidators
     # Na cobrança, a soma é a do módulo 11 com pesos de 2 a 9 (Digitos, em
     # digitos.rb), mas quando a conta dá 0, 10 ou 11 o dígito vira 1 (nunca é 0).
     def self.mod11_cobranca(digits)
-      digit = 11 - (Digitos.soma_pesos_2_a_9(digits) % 11)
+      digit = 11 - (Digitos.soma_modulo11(digits) % 11)
       [0, 10, 11].include?(digit) ? 1 : digit
     end
 

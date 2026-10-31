@@ -11,14 +11,14 @@ module BrValidators
     # Soma do "módulo 11 com pesos de 2 a 9": da direita para a esquerda, cada
     # caractere é multiplicado por 2, 3, ..., 9, e o peso volta ao 2 depois do 9.
     # Usada no CNPJ, no RENAVAM, na chave de acesso e no boleto.
-    def self.soma_pesos_2_a_9(texto)
+    def self.soma_modulo11(texto)
       ultimo = texto.size - 1
       (0..ultimo).sum { |posicao| (texto.getbyte(ultimo - posicao) - 48) * ((posicao % 8) + 2) }
     end
 
     # O dígito mais comum do módulo 11: resto 0 ou 1 vira 0; senão, 11 menos o resto.
     def self.modulo11(texto)
-      resto = soma_pesos_2_a_9(texto) % 11
+      resto = soma_modulo11(texto) % 11
       resto < 2 ? 0 : 11 - resto
     end
   end
