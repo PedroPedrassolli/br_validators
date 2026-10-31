@@ -72,3 +72,8 @@ quebra quem já usa → 1.0.0.
   - A CI cobre o que a prévia conferia: testa a função `api/validar.rb` e a página.
 - A função `api/validar.rb` responde com cache de 1 dia na Vercel (a resposta só depende
   da URL). Isso economiza execuções no plano gratuito.
+- O `uptime.yml` confere a página e a `/api/validar` a cada 4 horas e depois de cada deploy
+  de produção, e abre (ou fecha) sozinho uma issue com o rótulo `uptime`. Mudou o título da
+  página ou a resposta da API de propósito? Mude o `uptime.yml` no mesmo PR.
+- O `rodape-pr.yml` tira sozinho do corpo de PRs e comentários o rodapé que ferramentas
+  acrescentam ao criar o texto pela API. Não precisa editar à mão.
