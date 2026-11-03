@@ -80,7 +80,7 @@ module BrValidators
     def self.buscar(caminho)
       status, corpo = cliente.get(URI("#{BASE}#{caminho}"))
       case status
-      when 200 then JSON.parse(corpo)
+      when 200 then objeto(corpo, caminho)
       when 400, 404 then nil
       else raise Erro, "A BrasilAPI respondeu #{status} em #{caminho}."
       end
@@ -88,7 +88,20 @@ module BrValidators
       raise Erro, "A BrasilAPI respondeu algo que não é JSON em #{caminho}."
     end
 
-    private_class_method :buscar
+    # O corpo de um 200 vira Hash. Duas coisas que antes passavam e estouravam depois, em
+    # quem usa o resultado (viravam erro 500 na API da calculadora):
+    #   - o Net::HTTP entrega o corpo sem encoding, e bytes que não são UTF-8 ficavam nos
+    #     textos e quebravam o JSON.generate; o scrub troca esses bytes por "�";
+    #   - a BrasilAPI sempre responde um objeto: nulo, número ou lista é resposta quebrada,
+    #     e o corpo vazio (nil) cai no "não é JSON".
+    def self.objeto(corpo, caminho)
+      dados = JSON.parse(corpo.to_s.dup.force_encoding(Encoding::UTF_8).scrub)
+      return dados if dados.is_a?(Hash)
+
+      raise Erro, "A BrasilAPI respondeu algo que não é um objeto JSON em #{caminho}."
+    end
+
+    private_class_method :buscar, :objeto
 
     # Cliente padrão, só com a biblioteca padrão do Ruby (Net::HTTP).
     module HTTP

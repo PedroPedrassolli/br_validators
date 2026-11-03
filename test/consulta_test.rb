@@ -119,6 +119,29 @@ describe BrValidators::Consulta do
       responder(200, "<html>manutenção</html>")
       assert_raises(BrValidators::Consulta::Erro) { subject.cep("01001-000") }
     end
+
+    it "levanta Consulta::Erro quando o corpo vem vazio ou nulo" do
+      [nil, "", "null"].each do |corpo|
+        responder(200, corpo)
+        assert_raises(BrValidators::Consulta::Erro, "corpo #{corpo.inspect}") { subject.cep("01001-000") }
+      end
+    end
+
+    it "levanta Consulta::Erro quando o JSON não é um objeto (número, texto ou lista)" do
+      ["123", '"oi"', "[]", "true"].each do |corpo|
+        responder(200, corpo)
+        erro = assert_raises(BrValidators::Consulta::Erro, "corpo #{corpo}") { subject.cep("01001-000") }
+        assert_match(/não é um objeto JSON/, erro.message)
+      end
+    end
+
+    it "troca bytes que não são UTF-8 por � para o resultado sobreviver ao JSON.generate" do
+      # Net::HTTP entrega o corpo sem encoding (binário).
+      responder(200, "{\"city\":\"S\xE3o Paulo\"}".b)
+      resultado = subject.cep("01001-000")
+      assert_equal "S�o Paulo", resultado["city"]
+      assert_equal '{"city":"S�o Paulo"}', JSON.generate(resultado)
+    end
   end
 
   describe "cliente padrão" do
