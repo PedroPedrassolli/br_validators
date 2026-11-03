@@ -2,5 +2,5 @@
 
 # Versão da gem, lida também pelo gemspec.
 module BrValidators
-  VERSION = "0.3.1"
+  VERSION = "0.3.2"
 end

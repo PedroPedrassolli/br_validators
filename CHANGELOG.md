@@ -3,6 +3,16 @@
 As mudanças de cada versão ficam aqui. O projeto segue o
 [versionamento semântico](https://semver.org/lang/pt-BR/).
 
+## [0.3.2] - 2026-11-03
+
+### Corrigido
+
+- `Consulta` (CEP, CNPJ, banco e DDD) só aceita como resposta da BrasilAPI um objeto JSON.
+  Corpo vazio, `null`, número ou lista agora levantam `Consulta::Erro`; antes passavam e
+  quebravam depois, em quem usava o resultado (a API de CNPJ da calculadora devolvia erro 500).
+- Bytes que não são UTF-8 no corpo da resposta viram `�` em vez de ficarem nos textos. Antes,
+  um nome com esse problema fazia o `JSON.generate` do resultado levantar erro.
+
 ## [0.3.1] - 2026-10-31
 
 ### Corrigido
